@@ -1,0 +1,458 @@
+:root {
+    --bg-canvas: #E4E7EE;
+    --bg-sidebar: #ECEFF5;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #DCE1EB;
+    --bg-input: #F2F4F8;
+    --border-subtle: rgba(15, 23, 42, 0.13);
+    --border-strong: rgba(15, 23, 42, 0.24);
+    --text-primary: #111318;
+    --text-muted: #475569;
+    --accent: #111318;
+    --accent-soft: rgba(15, 23, 42, 0.08);
+    --pill-active-bg: #18181B;
+    --pill-active-text: #FFFFFF;
+    --shadow-card: 0 2px 5px rgba(15, 23, 42, 0.06), 0 10px 24px -14px rgba(15, 23, 42, 0.14);
+    --shadow-card-hover: 0 6px 18px -4px rgba(15, 23, 42, 0.14), 0 16px 32px -12px rgba(124, 58, 237, 0.14);
+}
+
+.dark {
+    --bg-canvas: #131314;
+    --bg-sidebar: #1B1C1E;
+    --bg-surface: #1E1F20;
+    --bg-elevated: #28292A;
+    --bg-input: #171819;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.17);
+    --text-primary: #E3E3E3;
+    --text-muted: #9E9E9E;
+    --accent: #E3E3E3;
+    --accent-soft: rgba(255, 255, 255, 0.08);
+    --pill-active-bg: #2D2E30;
+    --pill-active-text: #FFFFFF;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-card-hover: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+}
+
+/* Боковая панель */
+.studio-sidebar {
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-subtle);
+}
+
+/* Яркие, чёткие заголовки категорий в сайдбаре */
+.sidebar-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.6875rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.sidebar-cat-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 0.5rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    text-align: left;
+}
+.sidebar-item:hover {
+    background: var(--accent-soft);
+    color: var(--text-primary);
+    transform: translateX(2px);
+}
+.sidebar-item.is-active {
+    background: var(--pill-active-bg);
+    color: var(--pill-active-text);
+    font-weight: 600;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.22);
+}
+.sidebar-item svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    opacity: 0.78;
+}
+.sidebar-item.is-active svg {
+    opacity: 1;
+}
+
+/* Всплывающая плашка-подсказка при наведении на инструмент */
+#tool-hover-tooltip {
+    position: fixed;
+    z-index: 60;
+    pointer-events: none;
+    max-width: 260px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.28);
+    border-radius: 0.9rem;
+    padding: 0.65rem 0.85rem;
+    opacity: 0;
+    transform: translateX(-6px) scale(0.98);
+    transition: opacity 0.14s ease, transform 0.14s ease;
+}
+#tool-hover-tooltip.is-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+/* Верхняя панель */
+.studio-topbar {
+    background: rgba(228, 231, 238, 0.86);
+    border-bottom: 1px solid var(--border-subtle);
+}
+.dark .studio-topbar {
+    background: rgba(19, 19, 20, 0.86);
+}
+
+/* Карточки и поверхности */
+.lab-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-card);
+}
+
+.lab-segmented {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+}
+
+.lab-input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.lab-input:focus {
+    border-color: var(--border-strong);
+    background: var(--bg-surface);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.lab-icon-box {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Главные кнопки */
+.lab-btn-primary {
+    background: #18181B;
+    color: #FFFFFF;
+    font-weight: 600;
+    transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+}
+.lab-btn-primary:hover {
+    background: #2E3036;
+    transform: translateY(-0.5px);
+}
+.dark .lab-btn-primary {
+    background: #E3E3E3;
+    color: #131314;
+}
+.dark .lab-btn-primary:hover {
+    background: #FFFFFF;
+}
+
+.lab-btn-emerald {
+    background: #10B981;
+    color: #042016;
+    font-weight: 600;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+.lab-btn-emerald:hover {
+    filter: brightness(1.06);
+    transform: translateY(-0.5px);
+}
+
+/* Живой Hero-градиент на главной */
+.hero-ambient {
+    position: relative;
+    overflow: hidden;
+}
+.hero-ambient::before {
+    content: "";
+    position: absolute;
+    inset: -40% -10% auto -10%;
+    height: 220px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.16), rgba(6, 182, 212, 0.08) 45%, transparent 72%);
+    pointer-events: none;
+    z-index: 0;
+}
+.dark .hero-ambient::before {
+    background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.22), rgba(255, 59, 141, 0.10) 45%, transparent 72%);
+}
+
+.neon-text-gradient {
+    background: linear-gradient(120deg, #FF3B8D 0%, #7C3AED 50%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Живые Bento карточки */
+.bento-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+    overflow: hidden;
+}
+.bento-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card-hover);
+}
+.dark .bento-card:hover {
+    background: #232427;
+}
+.bento-card:hover .lab-icon-box {
+    transform: scale(1.07);
+}
+.bento-arrow {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.bento-card:hover .bento-arrow {
+    transform: translateX(4px);
+    opacity: 1;
+}
+
+/* Живой эквалайзер на карточке аудио */
+@keyframes eqPulse {
+    0%, 100% { transform: scaleY(0.45); }
+    50% { transform: scaleY(1); }
+}
+.eq-bar {
+    transform-origin: bottom;
+    animation: eqPulse 1.3s ease-in-out infinite;
+}
+
+/* Зона загрузки файлов */
+.dropzone-reactor {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1.5px dashed var(--border-strong);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.dropzone-reactor:hover,
+.dropzone-reactor.is-dragover {
+    border-style: solid;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14), var(--shadow-card-hover);
+}
+.dark .dropzone-reactor:hover,
+.dark .dropzone-reactor.is-dragover {
+    background: #222326;
+}
+
+/* Универсальная подсветка Drag & Drop в каждом блоке */
+.tool-drop-target {
+    position: relative;
+    transition: outline-color 0.15s ease;
+}
+.tool-drop-target.is-dragover {
+    outline: 2px dashed #7C3AED;
+    outline-offset: 6px;
+    border-radius: 1.25rem;
+}
+.tool-drop-target.is-dragover::after {
+    content: "Отпустите файл для загрузки";
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(228, 231, 238, 0.90);
+    backdrop-filter: blur(4px);
+    border-radius: 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    pointer-events: none;
+}
+.dark .tool-drop-target.is-dragover::after {
+    background: rgba(19, 19, 20, 0.86);
+}
+
+/* Чипсы-фильтры Анти-ИИ */
+.deai-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.42rem 0.78rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+.deai-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+}
+.deai-chip:has(input:checked) {
+    background: var(--pill-active-bg);
+    border-color: var(--border-strong);
+    color: var(--pill-active-text);
+}
+.deai-chip-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 9999px;
+    background: var(--border-strong);
+    transition: background-color 0.15s ease;
+}
+.deai-chip:has(input:checked) .deai-chip-dot {
+    background: #10B981;
+}
+
+/* Интерактивный эффект блюра на карточке Цензора */
+.censor-preview-text {
+    transition: filter 0.25s ease;
+}
+.bento-card:hover .censor-preview-text {
+    filter: blur(4px);
+}
+
+/* Скроллбар */
+.thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.thin-scroll::-webkit-scrollbar-track { background: transparent; }
+.thin-scroll::-webkit-scrollbar-thumb { background-color: rgba(148, 163, 184, 0.45); border-radius: 9999px; }
+.thin-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(148, 163, 184, 0.7); }
+
+/* Шахматная подложка холста */
+.lab-canvas-stage {
+    border: 1px solid var(--border-subtle);
+}
+.checkerboard {
+    background-color: #E2E6EE;
+    background-image:
+        linear-gradient(45deg, #D2D7E2 25%, transparent 25%),
+        linear-gradient(-45deg, #D2D7E2 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #D2D7E2 75%),
+        linear-gradient(-45deg, transparent 75%, #D2D7E2 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+.dark .checkerboard {
+    background-color: #161718;
+    background-image:
+        linear-gradient(45deg, #202124 25%, transparent 25%),
+        linear-gradient(-45deg, #202124 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #202124 75%),
+        linear-gradient(-45deg, transparent 75%, #202124 75%);
+}
+#censor-canvas { touch-action: none; cursor: crosshair; }
+
+/* Пульс индикатора приватности */
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.85); }
+}
+.live-dot { animation: pulseDot 2.4s ease-in-out infinite; }
+
+/* =========================================================================
+   HOME PAGE V7: SPLIT STUDIO HERO + SHOWCASE FEATURE TILES
+========================================================================= */
+.font-display {
+    font-family: "Unbounded", "Onest", sans-serif;
+}
+
+/* Новые объёмные плитки главных функций */
+.feature-tile {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, box-shadow 0.24s ease, background-color 0.24s ease;
+    overflow: hidden;
+}
+.feature-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(240px circle at 100% 0%, var(--tile-glow, rgba(124, 58, 237, 0.14)), transparent 70%);
+    opacity: 0.45;
+    transition: opacity 0.24s ease;
+    pointer-events: none;
+}
+.feature-tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card-hover);
+}
+.feature-tile:hover::before {
+    opacity: 1;
+}
+.dark .feature-tile:hover {
+    background: #232427;
+}
+
+.tile-preview {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.feature-tile:hover .tile-preview {
+    border-color: var(--border-strong);
+}
+
+.tile-arrow {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.feature-tile:hover .tile-arrow {
+    transform: translate(2px, -2px);
+    opacity: 1;
+}
+
+/* Интерактивный ховер-блюр внутри плитки Цензора */
+.feature-tile:hover .censor-preview-text {
+    filter: blur(4px);
+}
+
+/* Панель быстрого поиска на главной */
+.hero-spotlight-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.hero-spotlight-btn:hover {
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14), var(--shadow-card-hover);
+    transform: translateY(-1px);
+}
+
+/* Скрытый скроллбар для мобильных горизонтальных вкладок */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

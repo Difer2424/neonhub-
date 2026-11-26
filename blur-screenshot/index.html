@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <script>window.NEONHUB_INITIAL_ROUTE = "/blur-screenshot";</script>
+    <title>Цензор фото — замазать данные на скриншоте, рамки, стрелки и удалить EXIF | Neon Hub</title>
+    <meta name="description" content="Заблюрить или замазать пикселями личные данные на фото и скриншотах онлайн, добавить красную рамку или стрелку и полностью удалить GPS/EXIF-метаданные локально.">
+    <meta name="keywords" content="замазать скриншот, блюр фото онлайн, скрыть данные на фото, цензор фото, удалить exif, стрелка на скриншоте">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://neon-hub.ru/blur-screenshot/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Neon Hub",
+      "url": "https://neon-hub.ru/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+      "description": "18 приватных онлайн-инструментов в браузере без загрузки файлов на сервер."
+    }
+    </script>
+
+    <!-- Современная типографика: Golos Text + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- OpenGraph для соцсетей и мессенджеров -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Цензор фото — замазать данные на скриншоте, рамки, стрелки и удалить EXIF | Neon Hub">
+    <meta property="og:description" content="Заблюрить или замазать пикселями личные данные на фото и скриншотах онлайн, добавить красную рамку или стрелку и полностью удалить GPS/EXIF-метаданные локально.">
+    <meta property="og:image" content="og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Цензор фото — замазать данные на скриншоте, рамки, стрелки и удалить EXIF | Neon Hub">
+    <meta name="twitter:image" content="og-image.png">
+    <!-- Google Search Console: вставьте свой код верификации перед публикацией -->
+    <!-- <meta name="google-site-verification" content="YOUR_GSC_TOKEN"> -->
+    <meta name="theme-color" content="#131314">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Библиотеки для локальной обработки: SheetJS, JSZip, pdf-lib, QRCode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <!-- Яндекс.Метрика: раскомментируйте и вставьте свой ID счётчика -->
+    <!-- <script>window.NEONHUB_YM_ID = 00000000;</script> -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Onest"', 'system-ui', '-apple-system', 'sans-serif'],
+                        display: ['"Unbounded"', '"Onest"', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Фавиконки для браузеров, Google Search (48x48) и Яндекс (120x120 / SVG / ICO) -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="120x120" href="favicon-120x120.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- Тёмная тема (как в Gemini) по умолчанию -->
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('neonhub-theme') === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="font-sans antialiased min-h-screen flex transition-colors duration-200 selection:bg-teal-500/20 selection:text-teal-950 dark:selection:text-teal-100">
+
+    <!-- Мобильная подложка для бокового меню -->
+    <div id="sidebar-backdrop" class="hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs lg:hidden"></div>
+
+    <!-- =========================================================================
+         ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ (APP SHELL — ВСЕ 12 ИНСТРУМЕНТОВ В 1 КЛИК)
+    ========================================================================== -->
+    <aside id="app-sidebar" class="studio-sidebar fixed lg:sticky top-0 left-0 z-50 h-screen w-[272px] shrink-0 flex flex-col -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out">
+        <!-- Логотип -->
+        <div class="h-16 px-4 flex items-center justify-between border-b border-black/[0.06] dark:border-white/[0.06]">
+            <button type="button" data-nav="home" class="nav-btn group flex items-center gap-2.5 text-left focus:outline-none">
+                <span class="relative w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-fuchsia-500/25 group-hover:scale-105 group-hover:shadow-cyan-400/35 transition-all duration-200 overflow-hidden" style="background: linear-gradient(135deg, #FF3B8D 0%, #7C3AED 52%, #06B6D4 100%);">
+                    <span class="absolute inset-0 bg-gradient-to-tr from-black/15 via-transparent to-white/30 pointer-events-none"></span>
+                    <svg class="relative w-6 h-6 drop-shadow-[0_1px_4px_rgba(0,0,0,0.28)]" viewBox="0 0 64 64" fill="none">
+                        <defs>
+                            <linearGradient id="lb-face-top" x1="16" y1="8" x2="48" y2="32" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.96"/>
+                                <stop offset="100%" stop-color="#E0F2FE" stop-opacity="0.72"/>
+                            </linearGradient>
+                            <linearGradient id="lb-face-left" x1="12" y1="22" x2="32" y2="54" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.58"/>
+                                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+                            </linearGradient>
+                            <linearGradient id="lb-face-right" x1="52" y1="22" x2="32" y2="54" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.34"/>
+                                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- 3D Грани куба Neon Hub -->
+                        <path d="M32 8L53 20L32 32L11 20Z" fill="url(#lb-face-top)"/>
+                        <path d="M11 20L32 32V56L11 44Z" fill="url(#lb-face-left)"/>
+                        <path d="M53 20L32 32V56L53 44Z" fill="url(#lb-face-right)"/>
+                        <!-- Светящееся ядро -->
+                        <path d="M32 22.5L35 29L41.5 32L35 35L32 41.5L29 35L22.5 32L29 29Z" fill="#FFFFFF"/>
+                    </svg></span>
+                <span class="flex flex-col leading-none">
+                    <span class="font-display text-sm font-semibold tracking-tight text-slate-900 dark:text-white">Neon Hub</span>
+                    <span class="text-[10px] font-mono text-slate-400 mt-0.5">private studio</span>
+                </span>
+                <span id="seo-route-pill" class="hidden"></span>
+            </button>
+            <button type="button" id="sidebar-close-btn" aria-label="Закрыть меню" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Быстрый поиск ⌘K прямо в сайдбаре -->
+        <div class="p-3">
+            <button type="button" id="cmdk-trigger" class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs text-slate-500 dark:text-slate-400 lab-input hover:border-white/25 transition-colors">
+                <span class="flex items-center gap-2">
+                    <svg class="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+                    <span>Найти инструмент…</span>
+                </span>
+                <kbd class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-black/[0.05] dark:bg-white/[0.08] text-slate-500 dark:text-slate-300">⌘K</kbd>
+            </button>
+        </div>
+
+        <!-- Список всех инструментов -->
+        <nav class="flex-1 overflow-y-auto thin-scroll px-3 pb-4 space-y-5" aria-label="Навигация инструментов">
+            <!-- Главная / Dropzone -->
+            <div class="space-y-0.5">
+                <button type="button" data-seo-route="/" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    <span data-i18n="nav.home">Главная</span>
+                </button>
+            </div>
+
+            <!-- Избранные инструменты -->
+            <div id="sidebar-fav-wrap" class="hidden space-y-0.5">
+                <div class="sidebar-cat-header text-amber-600 dark:text-amber-400"><span class="sidebar-cat-dot bg-amber-500"></span><span data-i18n="nav.favorites">Избранное</span></div>
+                <div id="sidebar-fav-list" class="space-y-0.5"></div>
+            </div>
+
+            <!-- Недавние инструменты (заполняется автоматически) -->
+            <div id="sidebar-recent-wrap" class="hidden space-y-0.5">
+                <div class="sidebar-cat-header text-blue-600 dark:text-sky-400"><span class="sidebar-cat-dot bg-sky-500"></span><span data-i18n="nav.recent">Недавние</span></div>
+                <div id="sidebar-recent-list" class="space-y-0.5"></div>
+            </div>
+
+            <!-- Фото -->
+            <div class="space-y-0.5">
+                <div class="sidebar-cat-header text-cyan-700 dark:text-cyan-400"><span class="sidebar-cat-dot bg-cyan-500"></span><span data-i18n="nav.photoShort">Фото</span></div>
+                <button type="button" data-seo-route="/blur-screenshot" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+                    <span data-i18n="tool.censorShort">Цензор + EXIF</span>
+                </button>
+                <button type="button" data-seo-route="/resize-photo" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"/></svg>
+                    <span data-i18n="tool.resizerShort">Пресеты размеров</span>
+                </button>
+                <button type="button" data-seo-route="/compress-photo" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25"/></svg>
+                    <span data-i18n="tool.compressPhotoShort">Пакетное сжатие фото</span>
+                </button>
+                <button type="button" data-seo-route="/stitch-screenshots" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
+                    <span data-i18n="tool.stitchShort">Склейка скриншотов</span>
+                </button>
+                <button type="button" data-seo-route="/remove-bg" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></svg>
+                    <span data-i18n="tool.rmbgShort">Удаление фона фото</span>
+                </button>
+            </div>
+
+            <!-- Текст -->
+            <div class="space-y-0.5">
+                <div class="sidebar-cat-header text-violet-700 dark:text-violet-400"><span class="sidebar-cat-dot bg-violet-500"></span><span data-i18n="nav.textShort">Текст</span></div>
+                <button type="button" data-seo-route="/de-ai-text" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+                    <span data-i18n="tool.deaiShort">Анти-ИИ (De-AI)</span>
+                </button>
+                <button type="button" data-seo-route="/clean-pdf-text" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                    <span data-i18n="tool.cleanerShort">Очистка PDF</span>
+                </button>
+                <button type="button" data-seo-route="/compare-documents" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                    <span data-i18n="tool.diffShort">Сравнить (Diff)</span>
+                </button>
+                <button type="button" data-seo-route="/tables-converter" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125V5.625c0-.621.504-1.125 1.125-1.125h17.25c.621 0 1.125.504 1.125 1.125v12.75c0 .621-.504 1.125-1.125 1.125M2.25 9h19.5M9.75 9v10.5"/></svg>
+                    <span data-i18n="tool.tablesShort">Таблицы (XLSX/CSV)</span>
+                </button>
+                <button type="button" data-seo-route="/pdf-tools" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                    <span data-i18n="tool.pdfToolsShort">PDF-комбайн</span>
+                </button>
+                <button type="button" data-seo-route="/code-formatter" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/></svg>
+                    <span data-i18n="tool.codeFmtShort">Форматтер JSON / XML / SQL</span>
+                </button>
+            </div>
+
+            <!-- Медиа -->
+            <div class="space-y-0.5">
+                <div class="sidebar-cat-header text-pink-700 dark:text-pink-400"><span class="sidebar-cat-dot bg-pink-500"></span><span data-i18n="nav.media">Медиа</span></div>
+                <button type="button" data-seo-route="/video-to-gif" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 7.5A2.25 2.25 0 0 1 5.625 5.25h12.75a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25H5.625a2.25 2.25 0 0 1-2.25-2.25v-9ZM10 9.75l4.5 2.25-4.5 2.25v-4.5Z"/></svg>
+                    <span data-i18n="tool.gifShort">Видео → GIF</span>
+                </button>
+                <button type="button" data-seo-route="/audio-surgeon" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"/></svg>
+                    <span data-i18n="tool.surgeonShort">Аудио-хирург</span>
+                </button>
+                <button type="button" data-seo-route="/audio-to-text" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
+                    <span data-i18n="tool.transcribeShort">Аудио → Текст</span>
+                </button>
+                <button type="button" data-seo-route="/compress-video-discord" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
+                    <span data-i18n="tool.discordShort">Discord 10 МБ</span>
+                </button>
+            </div>
+
+            <!-- Утилиты -->
+            <div class="space-y-0.5">
+                <div class="sidebar-cat-header text-emerald-700 dark:text-emerald-400"><span class="sidebar-cat-dot bg-emerald-500"></span><span data-i18n="nav.utils">Утилиты</span></div>
+                <button type="button" data-seo-route="/quick-utils" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63"/></svg>
+                    <span data-i18n="tool.utilsShort">Быстрые утилиты</span>
+                </button>
+                <button type="button" data-seo-route="/p2p-transfer" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"/></svg>
+                    <span data-i18n="tool.transferShort">Передача по QR</span>
+                </button>
+                <button type="button" data-seo-route="/qr-generator" class="seo-link-btn sidebar-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5ZM15 15h.008v.008H15V15Zm3.75 3.75h.008v.008h-.008v-.008Zm0-3.75h.008v.008h-.008V15ZM15 18.75h.008v.008H15v-.008Z"/></svg>
+                    <span data-i18n="tool.qrGenShort">Генератор QR-кодов</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Нижний статус приватности -->
+        <div class="p-3 border-t border-black/[0.06] dark:border-white/[0.06]">
+            <div class="px-3 py-2 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/20 flex items-center gap-2 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot shrink-0"></span>
+                <div class="min-w-0">
+                    <div class="truncate">Локально • 0 Б в облако</div>
+                    <div id="sidebar-processed-stat" class="hidden text-[10px] font-mono opacity-80 truncate mt-0.5"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- =========================================================================
+         ПРАВАЯ РАБОЧАЯ ОБЛАСТЬ (КОНТЕКСТНАЯ ШАПКА + КОНТЕНТ)
+    ========================================================================== -->
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+        <!-- Компактная верхняя панель -->
+        <header class="studio-topbar sticky top-0 z-30 h-16 backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <button type="button" id="mobile-drawer-btn" aria-label="Открыть меню" class="lg:hidden p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.07]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 min-w-0">
+                    <button type="button" data-nav="home" class="nav-btn hover:text-slate-900 dark:hover:text-white transition-colors hidden sm:inline">Neon Hub</button>
+                    <span class="opacity-40 hidden sm:inline">/</span>
+                    <span id="topbar-breadcrumb" class="font-semibold text-slate-900 dark:text-white truncate">Главная</span>
+                    <button type="button" id="topbar-fav-btn" class="hidden p-1 rounded-lg text-zinc-400 hover:text-amber-400 transition-colors" title="Закрепить в Избранном">
+                        <svg id="topbar-fav-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>
+                    </button>
+                    <button type="button" id="topbar-share-btn" class="hidden p-1 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Скопировать ссылку на инструмент">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-500 dark:text-slate-400 bg-black/[0.03] dark:bg-white/[0.04]">
+                    Ctrl+V для скриншота
+                </span>
+                <button type="button" id="lang-toggle" class="px-2.5 py-1.5 rounded-xl text-xs font-mono font-semibold text-slate-600 dark:text-slate-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] transition-colors">
+                    RU
+                </button>
+                <button type="button" id="theme-toggle" aria-label="Сменить тему" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] transition-colors" title="Светлая / Тёмная тема">
+                    <svg class="hidden dark:block w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <svg class="block dark:hidden w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-9">
+
+        <!-- =====================================================================
+             ЭКРАН 0: ГЛАВНАЯ — СВЕТЛЫЙ SMART DROPZONE + УДОБНЫЙ BENTO
+        ====================================================================== -->
+        <section id="view-home" class="space-y-9">
+            <!-- ===============================================================
+                 ВЕРХНЯЯ СЦЕНА (SPLIT STUDIO): ОФФЕР + ПОИСК СЛЕВА | DROPZONE СПРАВА
+            ================================================================ -->
+            <div class="hero-ambient lab-panel rounded-3xl p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+                <!-- Левая часть: Типографика Unbounded, поиск и телеметрия -->
+                <div class="relative z-10 lg:col-span-7 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-semibold lab-segmented text-emerald-700 dark:text-emerald-400">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                        <span>Приватная студия • 0 Б в облако</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h1 class="font-display text-2xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.15] text-slate-900 dark:text-white">
+                            Инструменты, которые <span class="neon-text-gradient">не видят ваши файлы</span>
+                        </h1>
+                        <p class="text-sm sm:text-[15px] text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl" data-i18n="home.badge">
+                            Всё работает локально в браузере — без загрузок на сервер, регистраций и лимитов.
+                        </p>
+                    </div>
+
+                    <!-- Крупная строка быстрого поиска (открывает Command Palette) -->
+                    <button type="button" id="home-cmdk-btn" class="hero-spotlight-btn w-full max-w-md flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-left">
+                        <span class="flex items-center gap-2.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
+                            <svg class="w-4 h-4 text-violet-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+                            <span class="truncate">Найти задачу: убрать фон, сжать, PDF…</span>
+                        </span>
+                        <kbd class="shrink-0 font-mono text-[10px] font-semibold px-2 py-1 rounded-lg lab-segmented text-slate-600 dark:text-slate-300">⌘K</kbd>
+                    </button>
+
+                    <!-- Компактная полоса преимуществ -->
+                    <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500 dark:text-slate-400 pt-1">
+                        <span class="inline-flex items-center gap-1.5 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>18 локальных модулей</span>
+                        <span class="inline-flex items-center gap-1.5 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Вставка скриншота Ctrl+V</span>
+                        <span class="inline-flex items-center gap-1.5 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Работает офлайн (PWA)</span>
+                    </div>
+                </div>
+
+                <!-- Правая часть: Тактильный приёмник файлов (Dropzone Vault) -->
+                <div id="smart-dropzone" class="relative z-10 lg:col-span-5 dropzone-reactor rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center justify-center min-h-[250px]">
+                    <input id="smart-file-input" type="file" multiple class="hidden" accept="image/*,video/*,audio/*,.pdf,.txt,.md,.csv,.json,.xlsx,.xls,.log,.html,.xml">
+
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg mb-3.5" style="background: linear-gradient(135deg, #FF3B8D 0%, #7C3AED 55%, #06B6D4 100%);">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                    </div>
+
+                    <p class="text-sm font-bold text-slate-900 dark:text-white leading-snug" data-i18n="drop.title">
+                        Перетащите файл сюда или вставьте скриншот (Ctrl+V)
+                    </p>
+                    <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-1">
+                        PNG • PDF • MP4 • MP3 • XLSX • TXT
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 w-full">
+                        <button type="button" id="smart-pick-btn" class="lab-btn-primary px-4 py-2 rounded-xl text-xs" data-i18n="drop.pickBtn">
+                            Выбрать файл
+                        </button>
+                        <button type="button" id="demo-image-btn" class="px-3 py-2 rounded-xl text-xs font-medium lab-segmented text-slate-800 dark:text-slate-200 hover:opacity-85 transition-opacity" data-i18n="drop.demoImg">
+                            Демо-фото
+                        </button>
+                        <button type="button" id="demo-diff-btn" class="px-3 py-2 rounded-xl text-xs font-medium lab-segmented text-slate-800 dark:text-slate-200 hover:opacity-85 transition-opacity" data-i18n="drop.demoDiff">
+                            Демо Diff
+                        </button>
+                    </div>
+
+                    <!-- Умные действия после выбора файла -->
+                    <div id="smart-suggestions" class="hidden w-full mt-4 pt-4 border-t border-black/[0.08] dark:border-white/[0.08] text-left">
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span id="smart-file-badge" class="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold lab-segmented text-zinc-800 dark:text-zinc-200">FILE</span>
+                                <span id="smart-file-summary" class="text-xs font-medium text-slate-800 dark:text-slate-200 truncate"></span>
+                            </div>
+                            <button type="button" id="smart-reset-btn" class="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 shrink-0" data-i18n="common.clear">Очистить</button>
+                        </div>
+                        <div id="smart-actions" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===============================================================
+                 НИЖНИЙ БЛОК: ВИТРИНА ГЛАВНЫХ ФУНКЦИЙ (НОВЫЕ ОБЪЁМНЫЕ ПЛИТКИ)
+            ================================================================ -->
+            <div class="space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="space-y-0.5">
+                        <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Главные функции</h2>
+                    </div>
+
+                    <!-- Фильтр витрины: по умолчанию открыты «Главные» -->
+                    <div class="lab-segmented inline-flex flex-wrap rounded-2xl p-1 gap-0.5">
+                        <button type="button" data-home-filter="featured" class="home-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-sm transition-all">Главные</button>
+                        <button type="button" data-home-filter="photo" class="home-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Фото</button>
+                        <button type="button" data-home-filter="text" class="home-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Текст и PDF</button>
+                        <button type="button" data-home-filter="media" class="home-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Медиа</button>
+                        <button type="button" data-home-filter="utils" class="home-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Утилиты</button>
+                        <button type="button" data-home-filter="all" class="home-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Все 18</button>
+                    </div>
+                </div>
+
+                <!-- СЕТКА ОБЪЁМНЫХ ПЛИТОК С МИНИ-ПРЕВЬЮ -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                    <!-- 1. ГЛАВНАЯ: АНТИ-ИИ ОЧИСТКА ТЕКСТА -->
+                    <button type="button" data-featured="true" data-home-cat="text" data-seo-route="/de-ai-text" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(139, 92, 246, 0.22);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>Текст • Хит
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview rounded-2xl p-3 font-mono text-[11px] flex flex-wrap items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                            <span>Текст</span>
+                            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[9px] font-bold">ZWSP</span>
+                            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[9px] font-bold">BOM</span>
+                            <span class="ml-auto text-[10px] font-bold text-emerald-600 dark:text-emerald-400">0% AI</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.deaiShort">Анти-ИИ очистка текста</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Рентген и удаление водяных знаков, тире и клише</p>
+                        </div>
+                    </button>
+
+                    <!-- 2. ГЛАВНАЯ: ЦЕНЗОР ФОТО + EXIF -->
+                    <button type="button" data-featured="true" data-home-cat="photo" data-seo-route="/blur-screenshot" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(6, 182, 212, 0.22);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Фото • Приватность
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview rounded-2xl p-3 font-mono text-[11px] flex items-center justify-between gap-2">
+                            <span class="censor-preview-text text-slate-800 dark:text-slate-200 font-semibold">0000 0000 0000</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[9px] font-bold">NO EXIF</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.censorShort">Цензор фото + EXIF</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Блюр, пиксели, рамки, стрелки и очистка GPS</p>
+                        </div>
+                    </button>
+
+                    <!-- 3. ГЛАВНАЯ: УДАЛЕНИЕ ФОНА ФОТО -->
+                    <button type="button" data-featured="true" data-home-cat="photo" data-seo-route="/remove-bg" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(236, 72, 153, 0.20);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Фото • AI
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview checkerboard rounded-2xl p-3 flex items-center justify-between gap-2">
+                            <span class="px-2 py-0.5 rounded-lg bg-slate-900/80 text-white text-[10px] font-mono font-semibold">PNG • Alpha</span>
+                            <span class="text-[10px] font-mono font-bold text-slate-700 dark:text-slate-300 bg-white/80 dark:bg-black/60 px-2 py-0.5 rounded-md">Без фона</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.rmbgShort">Удаление фона фото</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Локальная нейросеть и мгновенный вырез фона</p>
+                        </div>
+                    </button>
+
+                    <!-- 4. ГЛАВНАЯ: PDF-КОМБАЙН -->
+                    <button type="button" data-featured="true" data-home-cat="text" data-seo-route="/pdf-tools" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(124, 58, 237, 0.22);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>Документы
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview rounded-2xl p-3 font-mono text-[10px] flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                            <span class="px-2 py-1 rounded-md lab-segmented font-semibold">1.pdf</span>
+                            <span class="opacity-50">+</span>
+                            <span class="px-2 py-1 rounded-md lab-segmented font-semibold">2.pdf</span>
+                            <span class="ml-auto text-violet-600 dark:text-violet-400 font-bold">→ Готово</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.pdfToolsShort">PDF-комбайн</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Объединить, вырезать страницы и повернуть PDF</p>
+                        </div>
+                    </button>
+
+                    <!-- 5. ГЛАВНАЯ: ТРАНСКРИБАЦИЯ АУДИО В ТЕКСТ -->
+                    <button type="button" data-featured="true" data-home-cat="media" data-seo-route="/audio-to-text" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(244, 63, 94, 0.20);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-pink-600 dark:text-pink-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Медиа • Whisper
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview rounded-2xl p-3 flex items-center justify-between gap-3">
+                            <span class="flex items-end gap-1 h-4 text-pink-500">
+                                <span class="eq-bar w-1 h-2 bg-current rounded-full" style="animation-delay:0s"></span>
+                                <span class="eq-bar w-1 h-4 bg-current rounded-full" style="animation-delay:0.15s"></span>
+                                <span class="eq-bar w-1 h-3 bg-current rounded-full" style="animation-delay:0.3s"></span>
+                                <span class="eq-bar w-1 h-4 bg-current rounded-full" style="animation-delay:0.45s"></span>
+                                <span class="eq-bar w-1 h-2 bg-current rounded-full" style="animation-delay:0.6s"></span>
+                            </span>
+                            <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400">Голос → Текст</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.transcribeShort">Транскрибация аудио в текст</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Живая диктовка и офлайн-нейросеть Whisper</p>
+                        </div>
+                    </button>
+
+                    <!-- 6. ГЛАВНАЯ: ПАКЕТНОЕ СЖАТИЕ ФОТО -->
+                    <button type="button" data-featured="true" data-home-cat="photo" data-seo-route="/compress-photo" class="home-tool-card seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-4" style="--tile-glow: rgba(16, 185, 129, 0.22);">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Фото • ZIP
+                            </span>
+                            <span class="tile-arrow text-xs opacity-45">↗</span>
+                        </div>
+                        <div class="tile-preview rounded-2xl p-3 font-mono text-[11px] flex items-center justify-between gap-2">
+                            <span class="text-slate-500">12.4 МБ → <strong class="text-slate-900 dark:text-white">1.8 МБ</strong></span>
+                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[9px] font-bold">-85%</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.compressPhotoShort">Пакетное сжатие фото</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">До 50 фото в WebP / JPG и выгрузка одним ZIP</p>
+                        </div>
+                    </button>
+
+                    <!-- ОСТАЛЬНЫЕ 12 ИНСТРУМЕНТОВ (ПОКАЗЫВАЮТСЯ ПО КАТЕГОРИЯМ ИЛИ «ВСЕ 18») -->
+                    <button type="button" data-home-cat="photo" data-seo-route="/resize-photo" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(6, 182, 212, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-cyan-600 dark:text-cyan-400">Фото</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.resizerShort">Изменение размера фото</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Пресеты Telegram, Ozon/WB, 3×4 и YouTube</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="photo" data-seo-route="/stitch-screenshots" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(6, 182, 212, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-cyan-600 dark:text-cyan-400">Фото</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.stitchShort">Склейка скриншотов</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Собрать скрины вертикально или в сетку-коллаж</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="text" data-seo-route="/clean-pdf-text" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(139, 92, 246, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-violet-600 dark:text-violet-400">Текст</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.cleanerShort">Очистка текста из PDF</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Склейка переносов и удаление рваных строк</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="text" data-seo-route="/compare-documents" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(139, 92, 246, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-violet-600 dark:text-violet-400">Текст</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.diffShort">Сравнение текстов (Diff)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Наглядные отличия «Было / Стало» по словам</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="text" data-seo-route="/tables-converter" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(139, 92, 246, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-violet-600 dark:text-violet-400">Текст</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.tablesShort">Конвертер таблиц (Excel)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">CSV ↔ JSON ↔ Excel, удаление дубликатов</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="text" data-seo-route="/code-formatter" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(139, 92, 246, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-violet-600 dark:text-violet-400">Код</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.codeFmtShort">Форматтер JSON / XML / SQL</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Проверка синтаксиса, форматирование и сжатие</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="media" data-seo-route="/video-to-gif" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(244, 63, 94, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-pink-600 dark:text-pink-400">Медиа</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.gifShort">Конвертер видео в GIF</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Отрезок 1–10с встроенным LZW-кодером</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="media" data-seo-route="/audio-surgeon" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(244, 63, 94, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-pink-600 dark:text-pink-400">Медиа</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.surgeonShort">Удаление пауз в аудио</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Диктофон и авто-вырезание тишины на волне</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="media" data-seo-route="/compress-video-discord" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(244, 63, 94, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-pink-600 dark:text-pink-400">Медиа</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.discordShort">Сжатие видео до 10 МБ</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Расчёт битрейта под Discord и извлечение WAV</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="utils" data-seo-route="/qr-generator" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(16, 185, 129, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">Утилиты</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.qrGenShort">Генератор QR-кодов</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ссылки, Wi-Fi и Telegram в PNG (1024px) и SVG</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="utils" data-seo-route="/quick-utils" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(16, 185, 129, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">Утилиты</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.utilsShort">Утилиты (цвет, хеш, px)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Пипетка с лупой, пароли, SHA-256 и px ↔ мм</p>
+                        </div>
+                    </button>
+
+                    <button type="button" data-home-cat="utils" data-seo-route="/p2p-transfer" class="home-tool-card hidden seo-link-btn feature-tile rounded-3xl p-5 text-left flex flex-col justify-between gap-3" style="--tile-glow: rgba(16, 185, 129, 0.18);">
+                        <div class="flex items-center justify-between"><span class="text-[10px] font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">Утилиты</span><span class="tile-arrow text-xs opacity-45">↗</span></div>
+                        <div>
+                            <h3 class="font-display text-sm font-semibold text-slate-900 dark:text-white" data-i18n="tool.transferShort">Передача файлов по QR</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Отправить файл с ПК на телефон без облака</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+<!-- =====================================================================
+             ЭКРАН 1: ФОТО И ПРИВАТНОСТЬ (ЦЕНЗОР + EXIF | ПРЕСЕТЫ РАЗМЕРОВ)
+        ====================================================================== -->
+        <section id="view-photo" class="hidden space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"/></svg>
+                    </span>
+                    <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="nav.photoShort">Фото</h2>
+                </div>
+                <div class="lab-segmented inline-flex flex-nowrap overflow-x-auto no-scrollbar max-w-full whitespace-nowrap rounded-xl p-1">
+                    <button type="button" data-subtab="censor" class="photo-subtab px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.censorShort">Цензор + EXIF</button>
+                    <button type="button" data-subtab="resizer" class="photo-subtab px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.resizerShort">Пресеты размеров</button>
+                    <button type="button" data-subtab="compress" class="photo-subtab px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.compressPhotoShort">Пакетное сжатие</button>
+                    <button type="button" data-subtab="stitch" class="photo-subtab px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.stitchShort">Склейка</button>
+                    <button type="button" data-subtab="rmbg" class="photo-subtab px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.rmbgShort">Удалить фон</button>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 1А: ЦЕНЗОР + ОЧИСТКА EXIF -->
+            <div id="subview-censor" class="space-y-4 tool-drop-target" data-drop-target="censor">
+                <!-- Панель инструментов цензора -->
+                <div class="lab-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                            <span data-i18n="photo.loadImg">Загрузить фото</span>
+                            <input type="file" id="censor-file-input" accept="image/*" class="hidden">
+                        </label>
+                        <button type="button" id="censor-demo-btn" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="drop.demoImg">Демо-скриншот</button>
+
+                        <div class="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
+                        <!-- Режимы маскировки и аннотаций -->
+                        <div class="inline-flex flex-wrap rounded-xl bg-slate-100 dark:bg-[#28292A] p-1">
+                            <button type="button" data-mask-mode="blur" class="censor-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-700 shadow-sm" data-i18n="censor.blur">Блюр</button>
+                            <button type="button" data-mask-mode="pixel" class="censor-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300" data-i18n="censor.pixel">Пиксели</button>
+                            <button type="button" data-mask-mode="black" class="censor-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300" data-i18n="censor.black">Плашка</button>
+                            <button type="button" data-mask-mode="rect" class="censor-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300" data-i18n="censor.rect">Рамка</button>
+                            <button type="button" data-mask-mode="arrow" class="censor-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300" data-i18n="censor.arrow">Стрелка</button>
+                        </div>
+
+                        <!-- Цвет для рамки и стрелки -->
+                        <div class="flex items-center gap-1.5" title="Цвет рамки / стрелки">
+                            <button type="button" data-censor-color="#ef4444" class="censor-color-btn w-4 h-4 rounded-full bg-rose-500 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#1E1F20] ring-rose-500"></button>
+                            <button type="button" data-censor-color="#f59e0b" class="censor-color-btn w-4 h-4 rounded-full bg-amber-400 opacity-70 hover:opacity-100"></button>
+                            <button type="button" data-censor-color="#10b981" class="censor-color-btn w-4 h-4 rounded-full bg-emerald-500 opacity-70 hover:opacity-100"></button>
+                            <button type="button" data-censor-color="#ffffff" class="censor-color-btn w-4 h-4 rounded-full bg-white border border-zinc-400 opacity-70 hover:opacity-100"></button>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                            <span data-i18n="censor.strength">Сила:</span>
+                            <input type="range" id="censor-strength" min="6" max="32" value="16" class="w-20 accent-zinc-400">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="censor-undo" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="common.undo">Отменить</button>
+                        <button type="button" id="censor-clear" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="common.reset">Сбросить</button>
+                    </div>
+                </div>
+
+                <!-- Статус EXIF -->
+                <div id="exif-status-bar" class="lab-panel rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span id="exif-dot" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                        <span id="exif-text" class="text-slate-600 dark:text-slate-300" data-i18n="censor.exifWaiting">Загрузите изображение, чтобы проверить EXIF и замазать лишнее.</span>
+                    </div>
+                    <span id="censor-dims" class="font-mono text-slate-400"></span>
+                </div>
+
+                <!-- Холст -->
+                <div class="lab-canvas-stage rounded-2xl checkerboard p-4 flex items-center justify-center min-h-[340px] overflow-hidden">
+                    <div id="censor-empty" class="text-center text-slate-400 text-sm space-y-1">
+                        <p data-i18n="censor.canvasHint">Выделите мышкой или пальцем область на фото, чтобы скрыть личные данные</p>
+                    </div>
+                    <canvas id="censor-canvas" class="hidden max-w-full max-h-[520px] rounded-xl shadow-md"></canvas>
+                </div>
+
+                <!-- Экспорт и цепочки (Workflows) -->
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="censor-to-resizer" class="px-3.5 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-[#1E1F20] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="censor.toResizer">
+                            Передать в Пресеты размеров →
+                        </button>
+                        <button type="button" id="censor-to-qr" class="px-3.5 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-[#1E1F20] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="workflow.toQr">
+                            Отправить на телефон по QR →
+                        </button>
+                    </div>
+                    <button type="button" id="censor-download" class="px-5 py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald shadow-sm transition-colors" data-i18n="censor.download">
+                        Скачать чистый PNG (без EXIF)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 1Б: ПРЕСЕТЫ РАЗМЕРОВ ФОТО -->
+            <div id="subview-resizer" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 tool-drop-target" data-drop-target="resizer">
+                <!-- Настройки -->
+                <div class="lg:col-span-5 lab-panel rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                            <span data-i18n="photo.loadImg">Загрузить фото</span>
+                            <input type="file" id="resizer-file-input" accept="image/*" class="hidden">
+                        </label>
+                        <button type="button" id="resizer-demo-btn" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="drop.demoImg">Демо-скриншот</button>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="resizer.presets">Готовые пресеты</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" data-w="512" data-h="512" class="preset-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:border-white/30 text-left">
+                                <div class="font-semibold">Telegram Стикер</div>
+                                <div class="text-[11px] font-mono text-slate-400">512 × 512</div>
+                            </button>
+                            <button type="button" data-w="900" data-h="1200" class="preset-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:border-white/30 text-left">
+                                <div class="font-semibold">Ozon / WB</div>
+                                <div class="text-[11px] font-mono text-slate-400">900 × 1200</div>
+                            </button>
+                            <button type="button" data-w="354" data-h="472" class="preset-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:border-white/30 text-left">
+                                <div class="font-semibold">Фото 3×4 (300dpi)</div>
+                                <div class="text-[11px] font-mono text-slate-400">354 × 472</div>
+                            </button>
+                            <button type="button" data-w="1280" data-h="720" class="preset-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:border-white/30 text-left">
+                                <div class="font-semibold">YouTube Превью</div>
+                                <div class="text-[11px] font-mono text-slate-400">1280 × 720</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="resizer.width">Ширина (px)</label>
+                            <input type="number" id="resizer-w" value="900" min="16" max="4096" class="w-full px-3 py-2 rounded-xl text-sm font-mono lab-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="resizer.height">Высота (px)</label>
+                            <input type="number" id="resizer-h" value="1200" min="16" max="4096" class="w-full px-3 py-2 rounded-xl text-sm font-mono lab-input">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="resizer.fit">Режим вписывания</label>
+                            <select id="resizer-fit" class="w-full px-3 py-2 rounded-xl text-xs lab-input">
+                                <option value="cover">Cover (заполнить)</option>
+                                <option value="contain-white">Contain (белый фон)</option>
+                                <option value="contain-blur">Contain (размытый фон)</option>
+                                <option value="contain-transparent">Contain (прозрачный)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="resizer.format">Формат</label>
+                            <select id="resizer-format" class="w-full px-3 py-2 rounded-xl text-xs lab-input">
+                                <option value="image/png">PNG (без потерь)</option>
+                                <option value="image/jpeg">JPEG (меньше вес)</option>
+                                <option value="image/webp">WebP (современный)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <button type="button" id="resizer-download" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald transition-colors" data-i18n="common.download">Скачать результат</button>
+                        <button type="button" id="resizer-to-qr" class="px-3.5 py-2.5 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">QR →</button>
+                    </div>
+                </div>
+
+                <!-- Предпросмотр -->
+                <div class="lg:col-span-7 lab-canvas-stage rounded-2xl checkerboard p-4 flex flex-col items-center justify-center min-h-[360px]">
+                    <div id="resizer-empty" class="text-sm text-slate-400" data-i18n="resizer.empty">Загрузите фото слева или передайте из Цензора</div>
+                    <canvas id="resizer-canvas" class="hidden max-w-full max-h-[460px] rounded-xl shadow-md"></canvas>
+                    <div id="resizer-info" class="mt-3 text-xs font-mono text-slate-500 dark:text-slate-400"></div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 1В: ПАКЕТНОЕ СЖАТИЕ И КОНВЕРТАЦИЯ ФОТО (ZIP) -->
+            <div id="subview-photo-compress" class="hidden space-y-4 tool-drop-target" data-drop-target="photo-compress">
+                <div class="lab-panel rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                            <span data-i18n="pcomp.addPhotos">+ Выбрать фото (можно много)</span>
+                            <input type="file" id="pcomp-file-input" accept="image/*" multiple class="hidden">
+                        </label>
+                        <button type="button" id="pcomp-clear-btn" class="px-3 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-600 dark:text-zinc-300 hover:opacity-85" data-i18n="common.clear">Очистить</button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 text-xs">
+                        <select id="pcomp-format" class="px-3 py-2 rounded-xl lab-input font-mono text-xs">
+                            <option value="image/webp" selected>WebP (макс. сжатие)</option>
+                            <option value="image/jpeg">JPEG (универсальный)</option>
+                            <option value="image/png">PNG (без потерь)</option>
+                        </select>
+                        <label class="flex items-center gap-2">
+                            <span class="text-zinc-400">Качество:</span>
+                            <input type="range" id="pcomp-quality" min="20" max="95" value="80" class="w-24 accent-zinc-400">
+                            <span id="pcomp-quality-val" class="font-mono w-9">80%</span>
+                        </label>
+                        <select id="pcomp-maxw" class="px-3 py-2 rounded-xl lab-input font-mono text-xs">
+                            <option value="0" selected>Оригинал px</option>
+                            <option value="1920">Макс. 1920px</option>
+                            <option value="1280">Макс. 1280px</option>
+                            <option value="800">Макс. 800px</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Статистика и кнопка скачать ZIP -->
+                <div id="pcomp-summary-bar" class="hidden lab-panel rounded-2xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
+                        <span id="pcomp-total-count" class="text-zinc-400">0 файлов</span>
+                        <span id="pcomp-size-diff" class="font-semibold text-emerald-500"></span>
+                    </div>
+                    <button type="button" id="pcomp-download-zip" class="px-5 py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald transition-all">
+                        Скачать все одним ZIP
+                    </button>
+                </div>
+
+                <!-- Список обработанных фотографий -->
+                <div id="pcomp-list" class="lab-panel rounded-3xl p-6 min-h-[240px] flex flex-col justify-center">
+                    <div class="text-center space-y-2 py-8">
+                        <p class="text-sm font-medium text-zinc-700 dark:text-zinc-200">Перетащите сюда от 1 до 50 фотографий</p>
+                        <p class="text-xs text-zinc-500">Конвертация в WebP / JPG / PNG и сжатие происходят локально в браузере без потери приватности</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 1Г: СКЛЕЙКА СКРИНШОТОВ / КОЛЛАЖ -->
+            <div id="subview-photo-stitch" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 tool-drop-target" data-drop-target="photo-stitch">
+                <div class="lg:col-span-5 lab-panel rounded-3xl p-5 space-y-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer">
+                            <span>+ Добавить скриншоты</span>
+                            <input type="file" id="stitch-file-input" accept="image/*" multiple class="hidden">
+                        </label>
+                        <button type="button" id="stitch-clear-btn" class="px-3 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-600 dark:text-zinc-300" data-i18n="common.clear">Очистить</button>
+                    </div>
+
+                    <div id="stitch-file-list" class="space-y-1.5 max-h-44 overflow-y-auto thin-scroll">
+                        <div class="text-xs text-zinc-500 text-center py-4">Перетащите 2 или более скриншотов сюда</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-zinc-500 mb-1">Расположение</label>
+                            <select id="stitch-layout" class="w-full px-3 py-2 rounded-xl lab-input">
+                                <option value="vertical" selected>Вертикально ↓</option>
+                                <option value="horizontal">Горизонтально →</option>
+                                <option value="grid">Сетка (2 в ряд)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-zinc-500 mb-1">Фон</label>
+                            <select id="stitch-bg" class="w-full px-3 py-2 rounded-xl lab-input">
+                                <option value="#131314" selected>Тёмный (#131314)</option>
+                                <option value="#ffffff">Белый</option>
+                                <option value="transparent">Прозрачный</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <label class="block">
+                            <span class="text-zinc-500 flex justify-between"><span>Отступ</span><span id="stitch-gap-val" class="font-mono">12 px</span></span>
+                            <input type="range" id="stitch-gap" min="0" max="40" value="12" class="w-full mt-1.5 accent-zinc-400">
+                        </label>
+                        <label class="block">
+                            <span class="text-zinc-500">Скругление углов</span>
+                            <select id="stitch-radius" class="w-full mt-1 px-3 py-1.5 rounded-xl lab-input">
+                                <option value="0">0 px (острые)</option>
+                                <option value="12" selected>12 px</option>
+                                <option value="24">24 px</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <button type="button" id="stitch-download-btn" disabled class="w-full py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40">
+                        Скачать склеенный PNG
+                    </button>
+                </div>
+
+                <div class="lg:col-span-7 lab-canvas-stage rounded-3xl checkerboard p-4 flex flex-col items-center justify-center min-h-[360px]">
+                    <div id="stitch-empty" class="text-xs text-zinc-400 text-center">Добавьте скриншоты слева или перетащите их прямо в это окно</div>
+                    <canvas id="stitch-canvas" class="hidden max-w-full max-h-[520px] rounded-xl shadow-md"></canvas>
+                    <div id="stitch-info" class="mt-3 text-xs font-mono text-zinc-400"></div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 1Д: УДАЛЕНИЕ ФОНА ФОТО (ИИ В БРАУЗЕРЕ + БЫСТРЫЙ РЕЖИМ) -->
+            <div id="subview-photo-rmbg" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 tool-drop-target" data-drop-target="photo-rmbg">
+                <div class="lg:col-span-5 lab-panel rounded-3xl p-5 space-y-4">
+                    <label class="block w-full text-center p-5 rounded-2xl border-2 border-dashed border-zinc-400/30 hover:border-white/30 cursor-pointer transition-colors">
+                        <input type="file" id="rmbg-file-input" accept="image/*" class="hidden">
+                        <div class="text-xs font-semibold text-zinc-800 dark:text-zinc-100">Выбрать или перетащить фото</div>
+                        <div id="rmbg-status" class="mt-1 text-[11px] font-mono text-zinc-400">Файл не выбран</div>
+                    </label>
+
+                    <div class="space-y-2.5">
+                        <button type="button" id="rmbg-ai-btn" disabled class="w-full py-2.5 rounded-xl text-xs font-semibold lab-btn-primary disabled:opacity-40">
+                            Удалить фон нейросетью (локально)
+                        </button>
+                        <div class="p-3.5 rounded-2xl lab-input space-y-2.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-zinc-500">Быстро (однотонный фон): допуск</span>
+                                <span id="rmbg-tol-val" class="font-mono text-zinc-300">38</span>
+                            </div>
+                            <input type="range" id="rmbg-tol" min="10" max="100" value="38" class="w-full accent-zinc-400">
+                            <button type="button" id="rmbg-fast-btn" disabled class="w-full py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-800 dark:text-zinc-200 disabled:opacity-40">
+                                Убрать однотонный фон мгновенно
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="rmbg-download-btn" disabled class="w-full py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40">
+                        Скачать PNG без фона
+                    </button>
+                </div>
+
+                <div class="lg:col-span-7 lab-canvas-stage rounded-3xl checkerboard p-4 flex items-center justify-center min-h-[340px]">
+                    <div id="rmbg-empty" class="text-xs text-zinc-400 text-center">Предпросмотр на прозрачной сетке появится после загрузки фото</div>
+                    <img id="rmbg-preview" alt="No BG preview" class="hidden max-w-full max-h-[460px] rounded-xl">
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             ЭКРАН 2: ТЕКСТ И ДОКУМЕНТЫ (PDF CLEANER | DIFF | ANTI-AI DE-AI)
+        ====================================================================== -->
+        <section id="view-text" class="hidden space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                    </span>
+                    <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="nav.textShort">Текст</h2>
+                </div>
+                <div class="lab-segmented inline-flex flex-nowrap overflow-x-auto no-scrollbar max-w-full whitespace-nowrap rounded-xl p-1">
+                    <button type="button" data-subtab="deai" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.deaiShort">Анти-ИИ (De-AI)</button>
+                    <button type="button" data-subtab="cleaner" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.cleanerShort">Очистка PDF</button>
+                    <button type="button" data-subtab="diff" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.diffShort">Сравнить (Diff)</button>
+                    <button type="button" data-subtab="tables" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.tablesShort">Таблицы</button>
+                    <button type="button" data-subtab="pdf" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.pdfToolsShort">PDF-комбайн</button>
+                    <button type="button" data-subtab="codefmt" class="text-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.codeFmtShort">JSON / XML / SQL</button>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2А: ОЧИСТИТЕЛЬ «КРИВОГО» ТЕКСТА ИЗ PDF -->
+            <div id="subview-cleaner" class="space-y-4 tool-drop-target" data-drop-target="cleaner">
+                <div class="lab-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-4 text-xs">
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="opt-hyphens" checked class="accent-zinc-400 rounded">
+                            <span data-i18n="cleaner.optHyphens">Склеить переносы слов</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="opt-breaks" checked class="accent-zinc-400 rounded">
+                            <span data-i18n="cleaner.optBreaks">Убрать лишние разрывы строк</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="opt-spaces" checked class="accent-zinc-400 rounded">
+                            <span data-i18n="cleaner.optSpaces">Нормализовать пробелы</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="opt-pages" checked class="accent-zinc-400 rounded">
+                            <span data-i18n="cleaner.optPages">Удалить номера страниц</span>
+                        </label>
+                    </div>
+                    <button type="button" id="cleaner-sample-btn" class="px-3 py-1.5 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:opacity-85 transition-colors" data-i18n="cleaner.sample">Вставить пример из PDF</button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="lab-panel rounded-2xl p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300" data-i18n="cleaner.input">Исходный «рваный» текст</span>
+                            <button type="button" id="cleaner-clear-btn" class="text-[11px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200" data-i18n="common.clear">Очистить</button>
+                        </div>
+                        <textarea id="cleaner-input" rows="11" placeholder="Вставьте сюда скопированный из PDF текст с разорванными строками..." class="w-full flex-1 p-3 rounded-xl text-sm font-mono lab-input focus:outline-none focus:ring-2 focus:ring-white/20 resize-y"></textarea>
+                    </div>
+
+                    <div class="lab-panel rounded-2xl p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400" data-i18n="cleaner.output">Чистый текст</span>
+                            <span id="cleaner-stats" class="text-[11px] font-mono text-slate-400">0 симв.</span>
+                        </div>
+                        <textarea id="cleaner-output" rows="11" readonly class="w-full flex-1 p-3 rounded-xl text-sm lab-input focus:outline-none resize-y"></textarea>
+                        <div class="mt-3 flex flex-wrap justify-end gap-2">
+                            <button type="button" id="cleaner-to-deai" class="px-3.5 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="cleaner.toDeai">Проверить в Анти-ИИ →</button>
+                            <button type="button" id="cleaner-copy-btn" class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="common.copy">Копировать</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2Б: СРАВНЕНИЕ ТЕКСТОВ (DIFF) -->
+            <div id="subview-diff" class="hidden space-y-4 tool-drop-target" data-drop-target="diff">
+                <!-- Верхняя панель управления и статистики -->
+                <div class="lab-panel rounded-2xl p-4 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                        <span class="font-medium text-zinc-500 dark:text-zinc-400">Изменения:</span>
+                        <span id="diff-stat-add" class="px-2.5 py-1 rounded-full font-mono font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">+0 добавлено</span>
+                        <span id="diff-stat-del" class="px-2.5 py-1 rounded-full font-mono font-semibold bg-rose-500/15 text-rose-700 dark:text-rose-300">-0 удалено</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="diff-sample-btn" class="px-3.5 py-1.5 rounded-full text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:opacity-85 transition-opacity" data-i18n="diff.sample">Загрузить пример</button>
+                        <button type="button" id="diff-swap-btn" class="px-3.5 py-1.5 rounded-full text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:opacity-85 transition-opacity" data-i18n="diff.swap">Поменять местами</button>
+                    </div>
+                </div>
+
+                <!-- Два понятных поля ввода: Было / Стало -->
+                <div class="lab-panel rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-black/[0.07] dark:divide-white/[0.07]">
+                    <div class="flex flex-col">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between">
+                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                <span data-i18n="diff.v1">Было (Оригинал)</span>
+                            </span>
+                            <span class="text-[11px] text-zinc-400">или перетащите файл</span>
+                        </div>
+                        <textarea id="diff-left" rows="7" placeholder="Вставьте исходный текст или договор..." class="w-full p-4 bg-transparent text-xs sm:text-sm font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none resize-y"></textarea>
+                    </div>
+
+                    <div class="flex flex-col bg-black/[0.015] dark:bg-white/[0.015]">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between">
+                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span data-i18n="diff.v2">Стало (Новая версия)</span>
+                            </span>
+                            <span class="text-[11px] text-zinc-400">или перетащите файл</span>
+                        </div>
+                        <textarea id="diff-right" rows="7" placeholder="Вставьте изменённый текст..." class="w-full p-4 bg-transparent text-xs sm:text-sm font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none resize-y"></textarea>
+                    </div>
+                </div>
+
+                <!-- Наглядный построчный разбор отличий -->
+                <div class="lab-panel rounded-3xl overflow-hidden">
+                    <div class="px-5 py-3.5 border-b border-black/[0.06] dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <span class="font-semibold text-zinc-900 dark:text-zinc-100" data-i18n="diff.resultTitle">Наглядные отличия (по строкам и словам)</span>
+                        <div class="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
+                            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-rose-500/30 border border-rose-500/50"></span>Удалено</span>
+                            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-emerald-500/30 border border-emerald-500/50"></span>Добавлено</span>
+                        </div>
+                    </div>
+                    <div id="diff-output" class="font-mono text-xs sm:text-sm divide-y divide-black/[0.04] dark:divide-white/[0.04] overflow-x-auto thin-scroll max-h-[480px]">
+                        <div class="p-8 text-center text-zinc-500 text-xs" data-i18n="diff.empty">
+                            Вставьте две версии текста выше, перетащите два файла или нажмите «Загрузить пример».
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2В: АНТИ-ИИ ОЧИСТКА ТЕКСТА (EDITORIAL STUDIO LAYOUT) -->
+            <div id="subview-deai" class="hidden space-y-4 tool-drop-target" data-drop-target="deai">
+                <!-- Компактная студийная полоса статуса и действий -->
+                <div class="lab-panel rounded-2xl p-4 sm:px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <!-- Сравнение AI-следа -->
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400" data-i18n="deai.meterTitle">AI-след</span>
+                            <span id="deai-score-before" class="px-2.5 py-1 rounded-lg font-mono text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200">0%</span>
+                            <span class="text-zinc-400 text-xs">→</span>
+                            <span id="deai-score-after" class="px-2.5 py-1 rounded-lg font-mono text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">0%</span>
+                        </div>
+
+                        <!-- Единая лаконичная шкала -->
+                        <div class="hidden md:flex flex-col flex-1 max-w-xs gap-1">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                                <span><span data-i18n="deai.beforeLabel">До</span>: <span id="deai-count-before">0</span></span>
+                                <span id="deai-total-removed" class="text-zinc-900 dark:text-zinc-100 font-semibold"></span>
+                                <span><span data-i18n="deai.afterLabel">После</span>: <span id="deai-count-after">0</span></span>
+                            </div>
+                            <div class="h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden flex">
+                                <div id="deai-bar-before" class="h-full bg-amber-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="hidden"><div id="deai-bar-after" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" id="deai-sample-btn" class="px-3.5 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:border-white/25 transition-colors" data-i18n="deai.loadSample">
+                            Вставить пример
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Аккуратная строка чипсов-фильтров (без громоздких карточек и эмодзи) -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <label class="deai-chip" title="ZWSP, ZWNJ, ZWJ, BOM, NBSP, SHY">
+                        <input type="checkbox" id="deai-opt-invisible" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagInvisible">Водяные знаки</span>
+                        <span id="deai-badge-invisible" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+
+                    <label class="deai-chip" title="— (em-dash), – (en-dash) → -">
+                        <input type="checkbox" id="deai-opt-dashes" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagDashes">Длинные тире</span>
+                        <span id="deai-badge-dashes" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+
+                    <label class="deai-chip" title="«» “” ‘’ → кавычки, … → ...">
+                        <input type="checkbox" id="deai-opt-typo" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagTypo">Типографика</span>
+                        <span id="deai-badge-typo" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+
+                    <label class="deai-chip" title="**жирный**, ###, `код`, списки">
+                        <input type="checkbox" id="deai-opt-markdown" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagMarkdown">Markdown</span>
+                        <span id="deai-badge-markdown" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+
+                    <label class="deai-chip" title="Удалить все эмодзи">
+                        <input type="checkbox" id="deai-opt-emoji" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagEmoji">Эмодзи</span>
+                        <span id="deai-badge-emoji" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+
+                    <label class="deai-chip" title="Важно отметить, Certainly!, In conclusion">
+                        <input type="checkbox" id="deai-opt-cliches" checked class="sr-only">
+                        <span class="deai-chip-dot"></span>
+                        <span data-i18n="deai.diagCliches">Вводные клише</span>
+                        <span id="deai-badge-cliches" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/5 dark:bg-white/10 text-zinc-400">0</span>
+                    </label>
+                </div>
+
+                <!-- Единый двухпанельный редактор (в стиле DeepL / Linear) -->
+                <div class="lab-panel rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-black/[0.07] dark:divide-white/[0.07]">
+                    <!-- Левая панель: Исходник -->
+                    <div class="flex flex-col min-h-[360px]">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between gap-2">
+                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200" data-i18n="deai.inputLabel">Исходный текст</span>
+                            <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium lab-segmented text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white cursor-pointer select-none">
+                                <input type="checkbox" id="deai-show-invisible" class="accent-zinc-400 rounded">
+                                <span data-i18n="deai.showInvisible">Рентген символов</span>
+                            </label>
+                        </div>
+
+                        <div class="flex-1 p-5 flex flex-col">
+                            <textarea id="deai-input" rows="12" placeholder="Вставьте текст от нейросети или перетащите .txt/.md файл сюда..." class="w-full flex-1 bg-transparent text-sm leading-relaxed text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none resize-none"></textarea>
+
+                            <!-- Режим рентгена невидимых символов -->
+                            <div id="deai-invisible-wrapper" class="hidden flex-1 flex flex-col">
+                                <div class="mb-2.5 flex items-center justify-between gap-2 text-[11px] text-amber-700 dark:text-amber-300">
+                                    <span data-i18n="deai.inspectorHint">Скрытые символы подсвечены янтарными метками</span>
+                                    <button type="button" id="deai-back-to-edit" class="font-semibold underline" data-i18n="deai.backToEdit">Вернуться к правке</button>
+                                </div>
+                                <div id="deai-invisible-view" class="w-full flex-1 max-h-[360px] overflow-y-auto thin-scroll p-3.5 rounded-2xl text-sm font-mono whitespace-pre-wrap break-words leading-relaxed bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 text-zinc-800 dark:text-zinc-200"></div>
+                            </div>
+                        </div>
+
+                        <div class="px-5 py-3 border-t border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                            <span id="deai-in-stats">0 симв.</span>
+                            <button type="button" id="deai-clear-btn" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-i18n="common.clear">Очистить</button>
+                        </div>
+                    </div>
+
+                    <!-- Правая панель: Чистый результат -->
+                    <div class="flex flex-col min-h-[360px] bg-zinc-50/50 dark:bg-black/[0.12]">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between gap-2">
+                            <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400" data-i18n="deai.outputLabel">Очищенный текст</span>
+                            <span id="deai-out-stats" class="text-[11px] font-mono text-zinc-400">0 симв.</span>
+                        </div>
+
+                        <div class="flex-1 p-5 flex flex-col">
+                            <textarea id="deai-output" rows="12" readonly placeholder="Очищенный результат появится здесь мгновенно..." class="w-full flex-1 bg-transparent text-sm leading-relaxed text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none resize-none"></textarea>
+                        </div>
+
+                        <div class="px-5 py-3 border-t border-black/[0.05] dark:border-white/[0.05] flex flex-wrap items-center justify-end gap-2">
+                            <button type="button" id="deai-to-diff" class="px-3.5 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:border-white/25 transition-colors" data-i18n="deai.toDiff">
+                                Сравнить До/После →
+                            </button>
+                            <button type="button" id="deai-copy-btn" class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="common.copy">
+                                Копировать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2Г: УМНЫЙ КОНВЕРТЕР И ОЧИСТКА ТАБЛИЦ (CSV ↔ JSON ↔ EXCEL) -->
+            <div id="subview-tables" class="hidden space-y-4 tool-drop-target" data-drop-target="tables">
+                <!-- Верхняя панель загрузки и очистки -->
+                <div class="lab-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                            <span data-i18n="tables.upload">Загрузить .xlsx / .csv / .json</span>
+                            <input type="file" id="tables-file-input" accept=".xlsx,.xls,.csv,.json,.tsv,.txt" class="hidden">
+                        </label>
+                        <button type="button" id="tables-sample-btn" class="px-3 py-2 rounded-xl text-xs font-medium bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 transition-colors" data-i18n="tables.sample">
+                            Вставить пример таблицы
+                        </button>
+                        <button type="button" id="tables-clear-btn" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="common.clear">
+                            Очистить
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span id="tables-stats" class="font-mono text-slate-500 dark:text-slate-400">0 строк • 0 столбцов</span>
+                    </div>
+                </div>
+
+                <!-- Поле вставки текста (CSV / TSV / JSON) -->
+                <div class="lab-panel rounded-2xl p-4 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-300" data-i18n="tables.pasteLabel">Вставьте CSV, JSON или таблицу из Excel (Tab-разделители)</span>
+                        <button type="button" id="tables-parse-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 transition-opacity" data-i18n="tables.parseBtn">
+                            Распознать текст
+                        </button>
+                    </div>
+                    <textarea id="tables-raw-input" rows="4" placeholder='Например: name,city,price или [{"name":"Товар","price":1200}]' class="w-full p-3 rounded-xl text-xs font-mono lab-input focus:outline-none focus:ring-2 focus:ring-white/20 resize-y"></textarea>
+                </div>
+
+                <!-- Инструменты очистки, сортировки и экспорта -->
+                <div class="lab-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="tables-dedupe-btn" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="tables.dedupe">
+                            Удалить дубликаты
+                        </button>
+                        <button type="button" id="tables-trim-btn" class="px-3 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="tables.trim">
+                            Очистить пробелы и пустые
+                        </button>
+
+                        <div class="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
+                        <select id="tables-sort-col" class="px-2.5 py-2 rounded-xl text-xs lab-input">
+                            <option value="">Столбец сортировки...</option>
+                        </select>
+                        <button type="button" id="tables-sort-asc" class="px-2.5 py-2 rounded-xl text-xs font-mono border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800" title="По возрастанию">A→Z ↑</button>
+                        <button type="button" id="tables-sort-desc" class="px-2.5 py-2 rounded-xl text-xs font-mono border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800" title="По убыванию">Z→A ↓</button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="tables-export-xlsx" class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-emerald transition-colors">Excel (.xlsx)</button>
+                        <button type="button" id="tables-export-csv" class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-primary transition-colors">CSV</button>
+                        <button type="button" id="tables-export-json" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 dark:bg-slate-200 dark:hover:bg-white text-white dark:text-slate-900 transition-colors">JSON</button>
+                    </div>
+                </div>
+
+                <!-- Предпросмотр таблицы -->
+                <div class="lab-panel rounded-2xl overflow-hidden">
+                    <div id="tables-preview" class="overflow-x-auto max-h-[420px] thin-scroll p-4 text-xs text-slate-400 text-center" data-i18n="tables.empty">
+                        Загрузите файл Excel/CSV/JSON или вставьте данные выше, чтобы очистить, отсортировать и конвертировать таблицу.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2Д: PDF-КОМБАЙН (ОБЪЕДИНИТЬ / РАЗДЕЛИТЬ / ПОВЕРНУТЬ) -->
+            <div id="subview-pdf" class="hidden space-y-4 tool-drop-target" data-drop-target="pdf-tools">
+                <div class="lab-panel rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                            <span>+ Добавить PDF-файлы</span>
+                            <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" multiple class="hidden">
+                        </label>
+                        <button type="button" id="pdf-clear-btn" class="px-3 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-600 dark:text-zinc-300" data-i18n="common.clear">Очистить</button>
+                    </div>
+                    <span id="pdf-total-info" class="text-xs font-mono text-zinc-400">0 файлов • 0 стр.</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                    <!-- Левая часть: очередь PDF -->
+                    <div class="lg:col-span-7 lab-panel rounded-3xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Загруженные PDF-документы</h3>
+                            <span class="text-[11px] text-zinc-400">Меняйте порядок стрелками ↑ ↓</span>
+                        </div>
+                        <div id="pdf-file-list" class="space-y-2 min-h-[180px] flex flex-col justify-center">
+                            <div class="text-center text-xs text-zinc-500 py-8">
+                                Перетащите один или несколько PDF-файлов сюда, чтобы объединить их, вырезать нужные страницы или повернуть.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правая часть: операции -->
+                    <div class="lg:col-span-5 lab-panel rounded-3xl p-5 space-y-4">
+                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Настройки сборки</h3>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400">Диапазон страниц (необязательно)</label>
+                            <input type="text" id="pdf-page-range" placeholder="Например: 1-3, 5 (пусто = все страницы)" class="w-full px-3 py-2.5 rounded-xl text-xs font-mono lab-input focus:outline-none">
+                            <p class="text-[11px] text-zinc-500">Удобно, чтобы вытащить конкретные страницы из документа.</p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400">Поворот страниц</label>
+                            <select id="pdf-rotate-deg" class="w-full px-3 py-2.5 rounded-xl text-xs font-mono lab-input">
+                                <option value="0" selected>Без поворота (0°)</option>
+                                <option value="90">По часовой (+90°)</option>
+                                <option value="180">Перевернуть (180°)</option>
+                                <option value="270">Против часовой (-90°)</option>
+                            </select>
+                        </div>
+
+                        <button type="button" id="pdf-build-btn" disabled class="w-full py-3 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40 transition-all">
+                            Собрать и скачать PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 2Е: ФОРМАТТЕР И ВАЛИДАТОР JSON / XML / SQL -->
+            <div id="subview-codefmt" class="hidden space-y-4 tool-drop-target" data-drop-target="codefmt">
+                <div class="lab-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="lab-segmented inline-flex flex-nowrap overflow-x-auto no-scrollbar max-w-full whitespace-nowrap rounded-xl p-1">
+                            <button type="button" data-fmtmode="json" class="codefmt-mode-btn px-3 py-1 rounded-lg text-xs font-mono font-medium bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-sm">JSON</button>
+                            <button type="button" data-fmtmode="xml" class="codefmt-mode-btn px-3 py-1 rounded-lg text-xs font-mono font-medium text-slate-500">XML</button>
+                            <button type="button" data-fmtmode="sql" class="codefmt-mode-btn px-3 py-1 rounded-lg text-xs font-mono font-medium text-slate-500">SQL</button>
+                        </div>
+                        <span id="codefmt-status" class="px-2.5 py-1 rounded-full text-[11px] font-mono text-zinc-500 dark:text-zinc-400 lab-segmented">Ожидание кода</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="codefmt-sample-btn" class="px-3 py-1.5 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200">Пример</button>
+                        <button type="button" id="codefmt-pretty-btn" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold lab-btn-primary">Форматировать</button>
+                        <button type="button" id="codefmt-minify-btn" class="px-3 py-1.5 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200">Сжать (Minify)</button>
+                    </div>
+                </div>
+
+                <div class="lab-panel rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-black/[0.07] dark:divide-white/[0.07]">
+                    <div class="flex flex-col min-h-[340px]">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between text-xs">
+                            <span class="font-semibold text-zinc-700 dark:text-zinc-200">Исходный код</span>
+                            <button type="button" id="codefmt-clear-btn" class="text-[11px] text-zinc-400 hover:text-zinc-200" data-i18n="common.clear">Очистить</button>
+                        </div>
+                        <textarea id="codefmt-input" rows="13" placeholder="Вставьте JSON, XML или SQL-запрос (или перетащите файл)..." class="w-full flex-1 p-4 bg-transparent text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none resize-none"></textarea>
+                    </div>
+                    <div class="flex flex-col min-h-[340px] bg-black/[0.015] dark:bg-white/[0.015]">
+                        <div class="px-5 py-3 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between text-xs">
+                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">Результат</span>
+                            <button type="button" id="codefmt-copy-btn" class="px-3 py-1 rounded-lg text-[11px] font-semibold lab-btn-primary" data-i18n="common.copy">Копировать</button>
+                        </div>
+                        <textarea id="codefmt-output" rows="13" readonly placeholder="Отформатированный результат..." class="w-full flex-1 p-4 bg-transparent text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             ЭКРАН 3: МЕДИА (DISCORD 10 МБ | ВИДЕО → GIF | АУДИО-ХИРУРГ | WHISPER)
+        ====================================================================== -->
+        <section id="view-media" class="hidden space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"/></svg>
+                    </span>
+                    <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="nav.media">Медиа</h2>
+                </div>
+                <div class="lab-segmented inline-flex flex-nowrap overflow-x-auto no-scrollbar max-w-full whitespace-nowrap rounded-xl p-1">
+                    <button type="button" data-subtab="gif" class="media-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.gifShort">Видео → GIF</button>
+                    <button type="button" data-subtab="surgeon" class="media-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.surgeonShort">Аудио-хирург</button>
+                    <button type="button" data-subtab="transcribe" class="media-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.transcribeShort">Аудио → Текст</button>
+                    <button type="button" data-subtab="compress" class="media-subtab px-3 py-1.5 rounded-lg text-xs font-medium transition-all" data-i18n="tool.discordShort">Discord 10 МБ</button>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 3А: СЖАТИЕ ПОД ЛИМИТЫ + WAV -->
+            <div id="subview-media-compress" class="grid grid-cols-1 lg:grid-cols-12 gap-5 tool-drop-target" data-drop-target="media-compress">
+                <div class="lg:col-span-6 lab-panel rounded-2xl p-5 space-y-4">
+                    <label class="block w-full text-center p-6 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-white/30 cursor-pointer transition-colors">
+                        <input type="file" id="media-file-input" accept="video/*,audio/*" class="hidden">
+                        <div class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="media.pick">Выберите видео или аудио (MP4, WebM, MOV, MP3)</div>
+                        <div id="media-file-name" class="mt-1 text-xs font-mono text-slate-400">Файл не выбран</div>
+                    </label>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="media.targetLimit">Целевой лимит сжатия</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" data-mb="9.5" class="media-preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-zinc-500 bg-zinc-500/15 text-zinc-900 dark:text-white">Discord 10 МБ</button>
+                            <button type="button" data-mb="24" class="media-preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200/90 dark:border-slate-700/80">Почта 25 МБ</button>
+                            <button type="button" data-mb="48" class="media-preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200/90 dark:border-slate-700/80">TG 50 МБ</button>
+                        </div>
+                    </div>
+
+                    <div id="media-calc-box" class="rounded-xl lab-input p-3.5 text-xs font-mono space-y-1 text-slate-600 dark:text-slate-300">
+                        <div>Целевой битрейт: <span id="media-bitrate" class="font-semibold text-zinc-900 dark:text-zinc-100">—</span></div>
+                        <div>Команда FFmpeg: <span id="media-ffmpeg-cmd" class="text-slate-400 break-all">ffmpeg -i input.mp4 -c:v libx264 -b:v ...</span></div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="media-extract-wav" class="px-4 py-2.5 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="media.extractWav">Вытащить звук (WAV локально)</button>
+                        <button type="button" id="media-to-qr" class="px-3.5 py-2.5 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="workflow.toQr">Отправить по QR →</button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 lab-panel rounded-2xl p-5 flex flex-col justify-between">
+                    <video id="media-preview" controls class="hidden w-full max-h-[300px] rounded-xl bg-black"></video>
+                    <div id="media-placeholder" class="flex-1 flex items-center justify-center min-h-[220px] rounded-xl lab-input text-xs text-slate-400 text-center p-4">
+                        Предпросмотр видео и длительность появятся после выбора файла.<br>Для полного перекодирования в Волне 2 подключается @ffmpeg/ffmpeg (COOP/COEP).
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 3Б: ПЕРЕВОД ВИДЕО В GIF (ВСТРОЕННЫЙ GIF89a-КОДИРОВЩИК) -->
+            <div id="subview-media-gif" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 tool-drop-target" data-drop-target="media-gif">
+                <div class="lg:col-span-5 lab-panel rounded-2xl p-5 space-y-4">
+                    <label class="block w-full text-center p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-white/30 cursor-pointer transition-colors">
+                        <input type="file" id="gif-file-input" accept="video/*" class="hidden">
+                        <div class="text-xs font-semibold text-slate-800 dark:text-slate-200" data-i18n="gif.pickVideo">Выбрать видео (MP4 / WebM / MOV)</div>
+                        <div id="gif-file-name" class="mt-1 text-[11px] font-mono text-slate-400">Файл не выбран</div>
+                    </label>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="gif.startSec">Начало (сек)</label>
+                            <input type="number" id="gif-start" value="0" min="0" step="0.5" class="w-full px-3 py-2 rounded-xl text-sm font-mono lab-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                <span data-i18n="gif.durationSec">Длина (1–10с):</span> <span id="gif-dur-val" class="font-mono text-zinc-900 dark:text-zinc-100">3</span>с
+                            </label>
+                            <input type="range" id="gif-duration" min="1" max="10" step="0.5" value="3" class="w-full mt-2 accent-zinc-400">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="gif.width">Ширина (px)</label>
+                            <select id="gif-width" class="w-full px-3 py-2 rounded-xl text-xs font-mono lab-input">
+                                <option value="240">240 px (лёгкий)</option>
+                                <option value="320" selected>320 px (оптимально)</option>
+                                <option value="480">480 px (чёткий)</option>
+                                <option value="640">640 px (HD)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n="gif.fps">Частота (FPS)</label>
+                            <select id="gif-fps" class="w-full px-3 py-2 rounded-xl text-xs font-mono lab-input">
+                                <option value="6">6 FPS</option>
+                                <option value="10" selected>10 FPS</option>
+                                <option value="12">12 FPS</option>
+                                <option value="15">15 FPS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="gif-progress-wrap" class="hidden space-y-1.5">
+                        <div class="flex justify-between text-[11px] font-mono text-slate-500">
+                            <span id="gif-progress-label">Кодирование GIF...</span>
+                            <span id="gif-progress-pct">0%</span>
+                        </div>
+                        <div class="h-2 rounded-full bg-slate-100 dark:bg-[#28292A] overflow-hidden">
+                            <div id="gif-progress-bar" class="h-full bg-zinc-200 transition-all duration-150" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="gif-render-btn" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="gif.renderBtn">
+                            Создать GIF локально
+                        </button>
+                        <button type="button" id="gif-download-btn" disabled class="px-4 py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40 transition-colors" data-i18n="common.download">
+                            Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 lab-panel rounded-2xl p-5 space-y-4">
+                    <video id="gif-source-video" controls muted playsinline class="hidden w-full max-h-[240px] rounded-xl bg-black"></video>
+                    <div id="gif-result-box" class="min-h-[220px] rounded-xl checkerboard border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center p-4 text-center">
+                        <span id="gif-placeholder" class="text-xs text-slate-400" data-i18n="gif.placeholder">Выберите видео слева и нажмите «Создать GIF» — встроенный LZW-кодировщик соберёт анимацию прямо в браузере.</span>
+                        <img id="gif-result-img" alt="GIF preview" class="hidden max-w-full max-h-[300px] rounded-xl shadow-md">
+                        <div id="gif-result-meta" class="mt-2 text-xs font-mono text-slate-500 dark:text-slate-400"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 3В: АУДИО-ХИРУРГ + ДИКТОФОН С ЖИВЫМ УРОВНЕМ ЗВУКА -->
+            <div id="subview-media-surgeon" class="hidden space-y-4 tool-drop-target" data-drop-target="media-surgeon">
+                <div class="lab-panel rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button" id="rec-toggle-btn" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 transition-colors">
+                            <span id="rec-dot" class="w-2.5 h-2.5 rounded-full bg-white"></span>
+                            <span id="rec-btn-label" data-i18n="surgeon.recStart">Записать с микрофона</span>
+                        </button>
+                        <label class="px-3.5 py-2.5 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                            <span data-i18n="surgeon.loadAudio">Открыть аудио/видео</span>
+                            <input type="file" id="surgeon-file-input" accept="audio/*,video/*" class="hidden">
+                        </label>
+                    </div>
+
+                    <!-- Живой индикатор уровня звука и таймер записи -->
+                    <div class="flex items-center gap-3 flex-1 min-w-[200px] max-w-sm">
+                        <span id="rec-timer" class="font-mono text-xs font-semibold text-slate-600 dark:text-slate-300 w-12">00:00</span>
+                        <div class="flex-1 h-3 rounded-full bg-slate-100 dark:bg-[#28292A] overflow-hidden border border-slate-200/90 dark:border-slate-700/80">
+                            <div id="rec-vu-bar" class="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 transition-all duration-75" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Звуковая волна -->
+                <div class="lab-panel rounded-2xl p-4 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <span class="font-semibold text-slate-700 dark:text-slate-300" data-i18n="surgeon.waveTitle">Звуковая волна (янтарным отмечены паузы к вырезанию)</span>
+                        <span id="surgeon-stats" class="font-mono text-slate-500 dark:text-slate-400">Нет аудио</span>
+                    </div>
+                    <div class="w-full h-36 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden relative">
+                        <canvas id="surgeon-wave-canvas" class="w-full h-full block"></canvas>
+                        <div id="surgeon-empty" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400" data-i18n="surgeon.empty">
+                            Нажмите «Записать с микрофона» или загрузите файл — волна появится мгновенно
+                        </div>
+                    </div>
+
+                    <!-- Настройки порога тишины и действия -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 pt-1">
+                        <div class="flex flex-wrap items-center gap-4 text-xs">
+                            <label class="flex items-center gap-2">
+                                <span class="text-slate-500" data-i18n="surgeon.threshold">Порог тишины:</span>
+                                <input type="range" id="surgeon-threshold" min="0.005" max="0.12" step="0.005" value="0.025" class="w-24 accent-zinc-400">
+                                <span id="surgeon-threshold-val" class="font-mono w-10">2.5%</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <span class="text-slate-500" data-i18n="surgeon.minPause">Пауза от:</span>
+                                <input type="range" id="surgeon-min-pause" min="150" max="1500" step="50" value="400" class="w-24 accent-zinc-400">
+                                <span id="surgeon-pause-val" class="font-mono w-14">400 мс</span>
+                            </label>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="surgeon-cut-btn" disabled class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary disabled:opacity-40 transition-colors" data-i18n="surgeon.cutBtn">
+                                Вырезать паузы
+                            </button>
+                            <button type="button" id="surgeon-download-btn" disabled class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40 transition-colors" data-i18n="surgeon.downloadWav">
+                                Скачать WAV
+                            </button>
+                            <button type="button" id="surgeon-to-transcribe" disabled class="px-3.5 py-2 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors" data-i18n="surgeon.toTranscribe">
+                                В текст (Whisper) →
+                            </button>
+                        </div>
+                    </div>
+
+                    <audio id="surgeon-audio-player" controls class="hidden w-full mt-2"></audio>
+                </div>
+            </div>
+
+            <!-- ПОДВКЛАДКА 3Г: АУДИО В ТЕКСТ (ЖИВАЯ ДИКТОВКА + WHISPER В БРАУЗЕРЕ) -->
+            <div id="subview-media-transcribe" class="hidden space-y-4 tool-drop-target" data-drop-target="media-transcribe">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- Карточка 1: Живая диктовка с микрофона -->
+                    <div class="lab-panel rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="transcribe.liveTitle">1. Живая диктовка (микрофон)</h3>
+                            <select id="transcribe-lang" class="px-2.5 py-1 rounded-lg text-xs font-mono lab-input">
+                                <option value="ru-RU">Русский (ru-RU)</option>
+                                <option value="en-US">English (en-US)</option>
+                                <option value="de-DE">Deutsch (de-DE)</option>
+                            </select>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="transcribe.liveDesc">Мгновенная речь в текст в реальном времени через Web Speech API.</p>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="transcribe-live-btn" class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="transcribe.startLive">
+                                Начать диктовку
+                            </button>
+                            <span id="transcribe-live-status" class="text-xs text-slate-400">Готово</span>
+                        </div>
+                    </div>
+
+                    <!-- Карточка 2: Офлайн Whisper в браузере -->
+                    <div class="lab-panel rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="transcribe.whisperTitle">2. Офлайн-нейросеть Whisper (файл)</h3>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">whisper-tiny</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="transcribe.whisperDesc">Распознавание аудио/видеофайлов локально в браузере без отправки на сервер (при первом запуске скачивается модель ~40 МБ).</p>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 cursor-pointer hover:opacity-90 transition-opacity">
+                                <span data-i18n="transcribe.pickFile">Выбрать аудио/видео</span>
+                                <input type="file" id="whisper-file-input" accept="audio/*,video/*" class="hidden">
+                            </label>
+                            <button type="button" id="whisper-run-btn" disabled class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40 transition-colors" data-i18n="transcribe.runWhisper">
+                                Расшифровать (Whisper)
+                            </button>
+                        </div>
+                        <div id="whisper-status" class="text-[11px] font-mono text-slate-500 dark:text-slate-400">Файл не выбран</div>
+                    </div>
+                </div>
+
+                <!-- Поле результата транскрибации + передача в Анти-ИИ -->
+                <div class="lab-panel rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-300" data-i18n="transcribe.outputLabel">Распознанный текст</span>
+                        <button type="button" id="transcribe-clear-btn" class="text-[11px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200" data-i18n="common.clear">Очистить</button>
+                    </div>
+                    <textarea id="transcribe-output" rows="8" placeholder="Здесь появится расшифрованный текст..." class="w-full p-3 rounded-xl text-sm lab-input focus:outline-none focus:ring-2 focus:ring-white/20 resize-y"></textarea>
+                    <div class="flex flex-wrap justify-end gap-2">
+                        <button type="button" id="transcribe-to-deai" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-200/80 dark:border-amber-800/70 transition-colors" data-i18n="transcribe.toDeai">
+                            Передать в Анти-ИИ очиститель →
+                        </button>
+                        <button type="button" id="transcribe-copy-btn" class="px-4 py-2 rounded-xl text-xs font-semibold lab-btn-primary transition-colors" data-i18n="common.copy">
+                            Копировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             ЭКРАН 4: ПЕРЕДАЧА (ВОЛНА 3 — БРАУЗЕРНЫЙ AIRDROP ПО QR-КОДУ)
+        ====================================================================== -->
+        <section id="view-transfer" class="hidden space-y-5 tool-drop-target" data-drop-target="transfer">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5ZM13.5 13.5h2.25v2.25H13.5V13.5Zm4.5 4.5h2.25v2.25H18V18Zm0-4.5h2.25v2.25H18V13.5Zm-4.5 4.5h2.25v2.25H13.5V18Z"/></svg>
+                    </span>
+                    <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="tool.transferShort">Передача файлов по QR</h2>
+                </div>
+                <span id="transfer-p2p-status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono lab-segmented text-zinc-500 dark:text-zinc-400">Инициализация P2P…</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                <!-- Левая колонка: отправка и получение файлов -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="lab-panel rounded-3xl p-5 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white" data-i18n="transfer.queue">Очередь к отправке</h3>
+                            <div class="flex items-center gap-2">
+                                <label class="px-3.5 py-1.5 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                                    <span data-i18n="transfer.addFile">+ Добавить файл</span>
+                                    <input type="file" id="transfer-file-input" multiple class="hidden">
+                                </label>
+                                <button type="button" id="transfer-send-btn" disabled class="px-3.5 py-1.5 rounded-xl text-xs font-semibold lab-btn-emerald disabled:opacity-40 transition-all">
+                                    Отправить →
+                                </button>
+                            </div>
+                        </div>
+                        <div id="transfer-queue-list" class="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+                            Очередь пуста — добавьте файл или перетащите его прямо в это окно.
+                        </div>
+                    </div>
+
+                    <!-- Полученные по P2P файлы -->
+                    <div id="transfer-received-wrap" class="hidden lab-panel rounded-3xl p-5 space-y-3">
+                        <h3 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Полученные файлы</h3>
+                        <div id="transfer-received-list" class="space-y-2 text-xs"></div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка: QR-код комнаты + вход по коду -->
+                <div class="lg:col-span-5 lab-panel rounded-3xl p-5 text-center space-y-4">
+                    <div class="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" data-i18n="transfer.roomTitle">Комната P2P-передачи (WebRTC)</div>
+                    <div id="qr-container" class="mx-auto w-48 h-48 rounded-2xl bg-white p-3 border border-black/10 flex items-center justify-center shadow-sm"></div>
+                    <div class="font-mono text-base font-bold tracking-widest text-zinc-900 dark:text-zinc-100" id="transfer-room-code">PL-0000</div>
+                    <button type="button" id="transfer-new-room" class="px-4 py-2 rounded-xl text-xs font-medium lab-segmented text-zinc-700 dark:text-zinc-200 hover:opacity-85 transition-opacity" data-i18n="transfer.regen">
+                        Сгенерировать новый код
+                    </button>
+
+                    <div class="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] text-left space-y-2">
+                        <label class="block text-[11px] text-zinc-500">Или введите код с другого устройства:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="transfer-join-input" placeholder="PL-1234" class="flex-1 px-3 py-2 rounded-xl text-xs font-mono uppercase lab-input focus:outline-none">
+                            <button type="button" id="transfer-join-btn" class="px-3.5 py-2 rounded-xl text-xs font-semibold lab-btn-primary">Войти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             ЭКРАН 5: БЫСТРЫЕ УТИЛИТЫ (ПИПЕТКА С ЛУПОЙ | ЦВЕТА | ПАРОЛИ | SHA-256 | ЕДИНИЦЫ)
+        ====================================================================== -->
+        <section id="view-utils" class="hidden space-y-5">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"/></svg>
+                </span>
+                <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="tool.utilsShort">Быстрые утилиты</h2>
+            </div>
+
+            <!-- 1. Пипетка цвета с фото + Лупа + Конвертер HEX/RGB/HSL -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                <div id="picker-drop-card" class="lg:col-span-7 lab-panel rounded-2xl p-4 space-y-3 tool-drop-target" data-drop-target="utils-picker">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="utils.eyedropperTitle">Пипетка цвета с фото и лупой</h3>
+                        <div class="flex items-center gap-2">
+                            <label class="px-3 py-1.5 rounded-xl text-xs font-semibold lab-btn-primary cursor-pointer transition-colors">
+                                <span data-i18n="photo.loadImg">Загрузить фото</span>
+                                <input type="file" id="picker-file-input" accept="image/*" class="hidden">
+                            </label>
+                            <button type="button" id="picker-demo-btn" class="px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="drop.demoImg">Демо-скриншот</button>
+                        </div>
+                    </div>
+                    <div class="relative rounded-xl checkerboard border border-slate-200 dark:border-slate-800 min-h-[240px] flex items-center justify-center p-2 overflow-hidden">
+                        <span id="picker-empty" class="text-xs text-slate-400" data-i18n="utils.pickerEmpty">Загрузите фото и наведите курсор, чтобы снять цвет с лупой</span>
+                        <canvas id="picker-canvas" class="hidden max-w-full max-h-[340px] rounded-lg cursor-crosshair"></canvas>
+                        <!-- Лупа (увеличение пикселей под курсором) -->
+                        <canvas id="picker-loupe" width="110" height="110" class="hidden pointer-events-none absolute top-3 right-3 rounded-full border-2 border-white shadow-xl bg-slate-900"></canvas>
+                    </div>
+                    <div id="picker-history" class="flex flex-wrap items-center gap-1.5 min-h-[26px]"></div>
+                </div>
+
+                <!-- Конвертер HEX / RGB / HSL -->
+                <div class="lg:col-span-5 lab-panel rounded-2xl p-5 space-y-4">
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="utils.colorConvTitle">Конвертер HEX / RGB / HSL</h3>
+                    <div class="flex items-center gap-3">
+                        <input type="color" id="color-native" value="#0d9488" class="w-14 h-12 rounded-xl cursor-pointer border-0 bg-transparent">
+                        <div id="color-swatch" class="flex-1 h-12 rounded-xl border border-slate-200/90 dark:border-slate-700/80 shadow-inner" style="background-color: #0d9488"></div>
+                    </div>
+                    <div class="space-y-2.5 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-10 font-mono text-slate-500">HEX</span>
+                            <input type="text" id="color-hex" value="#0d9488" class="flex-1 px-3 py-2 rounded-xl font-mono lab-input">
+                            <button type="button" data-copy-target="color-hex" class="copy-util-btn px-2.5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800">Copy</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-10 font-mono text-slate-500">RGB</span>
+                            <input type="text" id="color-rgb" value="rgb(79, 70, 229)" class="flex-1 px-3 py-2 rounded-xl font-mono lab-input">
+                            <button type="button" data-copy-target="color-rgb" class="copy-util-btn px-2.5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800">Copy</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-10 font-mono text-slate-500">HSL</span>
+                            <input type="text" id="color-hsl" value="hsl(243, 75%, 59%)" class="flex-1 px-3 py-2 rounded-xl font-mono lab-input">
+                            <button type="button" data-copy-target="color-hsl" class="copy-util-btn px-2.5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Генератор паролей | SHA-256 | Конвертер единиц (px ↔ мм/см) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- Генератор паролей -->
+                <div class="lab-panel rounded-2xl p-5 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="utils.passTitle">Генератор паролей</h3>
+                        <span id="pass-strength" class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Надёжный</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="pass-output" readonly class="flex-1 px-3 py-2.5 rounded-xl text-xs font-mono lab-input">
+                        <button type="button" data-copy-target="pass-output" class="copy-util-btn px-3 py-2.5 rounded-xl text-xs font-semibold lab-btn-primary">Copy</button>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span>Длина: <strong id="pass-len-val" class="font-mono">20</strong></span>
+                        <input type="range" id="pass-len" min="8" max="64" value="20" class="w-36 accent-zinc-400">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" id="pass-upper" checked class="accent-zinc-400"> A-Z</label>
+                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" id="pass-lower" checked class="accent-zinc-400"> a-z</label>
+                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" id="pass-num" checked class="accent-zinc-400"> 0-9</label>
+                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" id="pass-sym" checked class="accent-zinc-400"> !@#$%</label>
+                    </div>
+                    <button type="button" id="pass-gen-btn" class="w-full py-2 rounded-xl text-xs font-semibold border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="utils.passRegen">
+                        Сгенерировать новый
+                    </button>
+                </div>
+
+                <!-- SHA-256 Хеш -->
+                <div id="sha-drop-card" class="lab-panel rounded-2xl p-5 space-y-3.5 tool-drop-target" data-drop-target="utils-sha">
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="utils.shaTitle">SHA-256 Хеш (текст и файлы)</h3>
+                    <textarea id="sha-input" rows="3" placeholder="Введите текст для расчёта SHA-256..." class="w-full p-2.5 rounded-xl text-xs font-mono lab-input resize-none"></textarea>
+                    <label class="block text-center py-2 px-3 rounded-xl text-xs font-medium border border-dashed border-slate-300 dark:border-slate-700 hover:border-white/30 cursor-pointer">
+                        <span id="sha-file-label" data-i18n="utils.shaFile">Или выберите файл для проверки хеша</span>
+                        <input type="file" id="sha-file-input" class="hidden">
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="sha-output" readonly placeholder="SHA-256..." class="flex-1 px-3 py-2 rounded-xl text-[11px] font-mono lab-input">
+                        <button type="button" data-copy-target="sha-output" class="copy-util-btn px-3 py-2 rounded-xl text-xs font-semibold lab-btn-primary">Copy</button>
+                    </div>
+                </div>
+
+                <!-- Конвертер единиц (включая px ↔ мм / см) -->
+                <div class="lab-panel rounded-2xl p-5 space-y-3.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="utils.unitsTitle">Конвертер единиц</h3>
+                        <select id="unit-dpi" class="px-2 py-1 rounded-lg text-[11px] font-mono lab-input" title="DPI для пересчёта пикселей">
+                            <option value="96" selected>96 DPI (Экран)</option>
+                            <option value="300">300 DPI (Печать)</option>
+                            <option value="150">150 DPI</option>
+                            <option value="72">72 DPI</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="unit-val" value="100" step="any" class="px-3 py-2 rounded-xl text-sm font-mono lab-input">
+                        <select id="unit-from" class="px-2.5 py-2 rounded-xl text-xs font-mono lab-input">
+                            <option value="px" selected>px (пиксели)</option>
+                            <option value="mm">мм (миллиметры)</option>
+                            <option value="cm">см (сантиметры)</option>
+                            <option value="in">in (дюймы)</option>
+                            <option value="pt">pt (пункты)</option>
+                        </select>
+                    </div>
+                    <div id="unit-results" class="grid grid-cols-2 gap-2 text-xs font-mono"></div>
+                </div>
+            </div>
+        </section>
+    
+
+        <!-- =====================================================================
+             ЭКРАН 6: ГЕНЕРАТОР QR-КОДОВ (ССЫЛКА / WI-FI / ТЕКСТ -> PNG / SVG)
+        ====================================================================== -->
+        <section id="view-qrgen" class="hidden space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl lab-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"/></svg>
+                    </span>
+                    <h2 class="font-display text-base sm:text-lg font-semibold text-slate-900 dark:text-white" data-i18n="tool.qrGenShort">Генератор QR-кодов</h2>
+                </div>
+                <div class="lab-segmented inline-flex flex-nowrap overflow-x-auto no-scrollbar max-w-full whitespace-nowrap rounded-xl p-1">
+                    <button type="button" data-qrmode="url" class="qrgen-mode-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-sm">Ссылка / Текст</button>
+                    <button type="button" data-qrmode="wifi" class="qrgen-mode-btn px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-500">Wi-Fi сеть</button>
+                    <button type="button" data-qrmode="tg" class="qrgen-mode-btn px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-500">Telegram</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                <div class="lg:col-span-7 lab-panel rounded-3xl p-5 space-y-4">
+                    <!-- Режим 1: URL / Текст -->
+                    <div id="qrgen-panel-url" class="space-y-2">
+                        <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400">Ссылка или произвольный текст</label>
+                        <textarea id="qrgen-url-input" rows="4" placeholder="https://example.com" class="w-full p-3.5 rounded-2xl text-sm font-mono lab-input focus:outline-none resize-y">https://neon-hub.ru</textarea>
+                    </div>
+
+                    <!-- Режим 2: Wi-Fi -->
+                    <div id="qrgen-panel-wifi" class="hidden space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Название сети (SSID)</label>
+                            <input type="text" id="qrgen-wifi-ssid" placeholder="MyHomeWiFi" class="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono lab-input focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Пароль</label>
+                                <input type="text" id="qrgen-wifi-pass" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono lab-input focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Шифрование</label>
+                                <select id="qrgen-wifi-enc" class="w-full px-3.5 py-2.5 rounded-xl text-xs font-mono lab-input">
+                                    <option value="WPA" selected>WPA / WPA2 / WPA3</option>
+                                    <option value="WEP">WEP</option>
+                                    <option value="nopass">Без пароля</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Режим 3: Telegram -->
+                    <div id="qrgen-panel-tg" class="hidden space-y-2">
+                        <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400">Имя пользователя Telegram (без @)</label>
+                        <div class="flex items-center rounded-xl lab-input overflow-hidden">
+                            <span class="px-3 text-xs font-mono text-zinc-400">https://t.me/</span>
+                            <input type="text" id="qrgen-tg-user" placeholder="username" class="flex-1 py-2.5 pr-3 bg-transparent text-sm font-mono focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Цвета QR-кода -->
+                    <div class="pt-2 flex flex-wrap items-center gap-4 text-xs">
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="color" id="qrgen-fg" value="#131314" class="w-7 h-7 rounded-lg border-0 bg-transparent cursor-pointer">
+                            <span class="text-zinc-500 dark:text-zinc-400">Цвет кода</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="color" id="qrgen-bg" value="#ffffff" class="w-7 h-7 rounded-lg border-0 bg-transparent cursor-pointer">
+                            <span class="text-zinc-500 dark:text-zinc-400">Цвет фона</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Предпросмотр и скачивание -->
+                <div class="lg:col-span-5 lab-panel rounded-3xl p-5 flex flex-col items-center justify-between gap-4">
+                    <div id="qrgen-preview" class="w-56 h-56 rounded-2xl p-3 bg-white border border-black/10 flex items-center justify-center shadow-sm"></div>
+                    <div class="w-full flex gap-2">
+                        <button type="button" id="qrgen-dl-png" class="flex-1 py-2.5 rounded-xl text-xs font-semibold lab-btn-emerald">Скачать PNG</button>
+                        <button type="button" id="qrgen-dl-svg" class="flex-1 py-2.5 rounded-xl text-xs font-semibold lab-btn-primary">Скачать SVG</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Свёрнутый SEO-блок «Вопросы и ответы» (динамически обновляется под каждый инструмент) -->
+        <section id="seo-faq-section" class="mt-10 pt-6 border-t border-black/[0.06] dark:border-white/[0.06]">
+            <details class="group lab-panel rounded-2xl overflow-hidden">
+                <summary class="px-5 py-3.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300 cursor-pointer flex items-center justify-between select-none list-none">
+                    <span id="seo-faq-title">Как это работает и почему это безопасно?</span>
+                    <svg class="w-4 h-4 opacity-60 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+                </summary>
+                <div id="seo-faq-body" class="px-5 pb-4 pt-1 space-y-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-black/[0.05] dark:border-white/[0.05]"></div>
+            </details>
+        </section>
+            </main>
+    </div>
+
+    <!-- COMMAND PALETTE MODAL (⌘K / Ctrl+K) -->
+    <div id="cmdk-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-[14vh] px-4">
+        <div id="cmdk-backdrop" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 w-full max-w-lg lab-panel rounded-2xl shadow-2xl overflow-hidden">
+            <div class="flex items-center gap-3 px-4 py-3.5 border-b border-black/[0.07] dark:border-white/[0.07]">
+                <svg class="w-4 h-4 text-zinc-900 dark:text-zinc-100 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+                <input type="text" id="cmdk-input" placeholder="Найти инструмент (блюр, excel, whisper, qr)..." class="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none">
+                <kbd class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-slate-500">ESC</kbd>
+            </div>
+            <div id="cmdk-list" class="p-2 max-h-[340px] overflow-y-auto thin-scroll space-y-0.5"></div>
+        </div>
+    </div>
+
+    <!-- Всплывающая плашка-подсказка при наведении на инструмент -->
+    <div id="tool-hover-tooltip" role="tooltip" aria-hidden="true">
+        <div id="tooltip-title" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+        <div id="tooltip-desc" class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-snug"></div>
+    </div>
+
+    <!-- Тост-уведомления -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+    <!-- Модульные скрипты -->
+    <script src="js/i18n.js" defer></script>
+    <script src="js/state.js" defer></script>
+    <script src="js/dropzone.js" defer></script>
+    <script src="js/photo.js" defer></script>
+    <script src="js/text.js" defer></script>
+    <script src="js/media.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/pdfTools.js" defer></script>
+    <script src="js/qrGen.js" defer></script>
+    <script src="js/codeTools.js" defer></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>
