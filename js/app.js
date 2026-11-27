@@ -16,7 +16,7 @@ const CommandPaletteModule = (() => {
         { route: '/compress-video-discord', cat: 'Медиа', ru: 'Сжатие видео до 10 МБ', en: 'Discord 10 MB Compressor', descRu: 'Расчёт битрейта и извлечение WAV', descEn: 'Bitrate calculator & WAV extract', kw: 'discord дискорд сжать видео 10 мб битрейт ffmpeg wav' },
         { route: '/quick-utils', cat: 'Утилиты', ru: 'Утилиты (цвет, хеш, px)', en: 'Quick Utilities', descRu: 'Пипетка с лупой, пароли, SHA-256, px ↔ мм', descEn: 'Color loupe, passwords, SHA-256, px↔mm', kw: 'пипетка цвет hex rgb hsl пароль sha256 хеш пиксели мм см dpi' },
         { route: '/compress-photo', cat: 'Фото', ru: 'Пакетное сжатие фото (ZIP)', en: 'Batch Photo Compressor', descRu: 'Сжать до 50 фото в WebP / JPG и скачать ZIP', descEn: 'Compress up to 50 photos to WebP/JPG ZIP', kw: 'сжать фото webp jpg png zip пакетное конвертер вес' },
-        { route: '/pdf-tools', cat: 'Текст', ru: 'PDF-комбайн (слить / разделить)', en: 'PDF Toolkit (Merge / Split)', descRu: 'Объединить, вырезать страницы, повернуть PDF', descEn: 'Merge, extract pages & rotate PDF locally', kw: 'pdf пдф объединить слить разделить повернуть страницы' },
+        { route: '/pdf-tools', cat: 'Текст', ru: 'PDF-инструменты (слить / разделить)', en: 'PDF Toolkit (Merge / Split)', descRu: 'Объединить, вырезать страницы, повернуть PDF', descEn: 'Merge, extract pages & rotate PDF locally', kw: 'pdf пдф объединить слить разделить повернуть страницы' },
         { route: '/stitch-screenshots', cat: 'Фото', ru: 'Склейка скриншотов / Коллаж', en: 'Stitch Screenshots', descRu: 'Склеить несколько скриншотов вертикально или в сетку', descEn: 'Combine multiple screenshots vertically or in a grid', kw: 'склейка скриншотов коллаж объединить фото вертикально сетка' },
         { route: '/remove-bg', cat: 'Фото', ru: 'Удаление фона с фото', en: 'Remove Image Background', descRu: 'Локальная нейросеть и мгновенное удаление однотонного фона', descEn: 'Local AI & instant solid background removal', kw: 'удалить фон вырезать png прозрачный фон background remover' },
         { route: '/code-formatter', cat: 'Текст', ru: 'Форматтер JSON / XML / SQL', en: 'JSON / XML / SQL Formatter', descRu: 'Красивое форматирование, валидация и минификация кода', descEn: 'Prettify, validate & minify JSON, XML, SQL', kw: 'json xml sql форматтер валидатор minify prettify код' },
@@ -138,7 +138,7 @@ const RouterModule = (() => {
         '/compress-video-discord': { ru: 'Медиа / Сжатие видео до 10 МБ', en: 'Media / Discord 10 MB' },
         '/quick-utils': { ru: 'Утилиты / Утилиты (цвет, хеш, px)', en: 'Utils / Quick Utilities' },
         '/compress-photo': { ru: 'Фото / Пакетное сжатие фото', en: 'Photo / Batch Compress' },
-        '/pdf-tools': { ru: 'Текст / PDF-комбайн', en: 'Text / PDF Toolkit' },
+        '/pdf-tools': { ru: 'Текст / PDF-инструменты', en: 'Text / PDF Toolkit' },
         '/stitch-screenshots': { ru: 'Фото / Склейка скриншотов', en: 'Photo / Stitch Screenshots' },
         '/remove-bg': { ru: 'Фото / Удаление фона фото', en: 'Photo / Remove Background' },
         '/code-formatter': { ru: 'Текст / Форматтер JSON / XML / SQL', en: 'Text / Code Formatter' },
@@ -182,6 +182,7 @@ const RouterModule = (() => {
             b.classList.toggle('text-slate-900', active);
             b.classList.toggle('dark:text-white', active);
             b.classList.toggle('shadow-sm', active);
+            b.classList.toggle('subtab-active', active);
             b.classList.toggle('text-slate-500', !active);
         });
     }
@@ -200,6 +201,7 @@ const RouterModule = (() => {
             b.classList.toggle('text-slate-900', active);
             b.classList.toggle('dark:text-white', active);
             b.classList.toggle('shadow-sm', active);
+            b.classList.toggle('subtab-active', active);
             b.classList.toggle('text-slate-500', !active);
         });
     }
@@ -216,6 +218,7 @@ const RouterModule = (() => {
             b.classList.toggle('text-slate-900', active);
             b.classList.toggle('dark:text-white', active);
             b.classList.toggle('shadow-sm', active);
+            b.classList.toggle('subtab-active', active);
             b.classList.toggle('text-slate-500', !active);
         });
     }
@@ -234,7 +237,6 @@ const RouterModule = (() => {
             btn.classList.toggle('is-active', btn.dataset.seoRoute === normalizedRoute);
         });
         renderFavorites();
-        renderRecent();
         updateFavButton();
         renderSeoFaq();
     }
@@ -255,7 +257,7 @@ const RouterModule = (() => {
             ['Сохраняется ли текст на сервере?', 'Нет, весь анализ и очистка выполняются локально в вашем браузере в реальном времени.']
         ],
         '/pdf-tools': [
-            ['Безопасно ли объединять договоры и паспорта в PDF-комбайне?', 'Да, сборка и разделение страниц выполняются локально библиотекой pdf-lib без загрузки документов в облако.'],
+            ['Безопасно ли объединять договоры и паспорта в PDF-инструментах?', 'Да, сборка и разделение страниц выполняются локально библиотекой pdf-lib без загрузки документов в облако.'],
             ['Как вытащить только нужные страницы?', 'Укажите диапазон в поле «Диапазон страниц», например: 1-3, 5 — в итоговый файл попадут только они.']
         ],
         '/compress-photo': [
@@ -275,10 +277,10 @@ const RouterModule = (() => {
         let list = getFavs();
         if (list.includes(path)) {
             list = list.filter((p) => p !== path);
-            StateModule.toast('Убрано из Избранного', 'info');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Убрано из Избранного' : 'Removed from Favorites', 'info');
         } else {
             list = [path, ...list].slice(0, 6);
-            StateModule.toast('Закреплено в Избранном!', 'success');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Закреплено в Избранном!' : 'Pinned to Favorites!', 'success');
         }
         try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (e) {}
         renderFavorites();
@@ -360,45 +362,6 @@ const RouterModule = (() => {
         });
     }
 
-    const RECENT_KEY = 'neonhub-recent';
-
-    function pushRecent(path) {
-        if (!path || path === '/') return;
-        try {
-            let list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-            list = [path, ...list.filter((p) => p !== path)].slice(0, 4);
-            localStorage.setItem(RECENT_KEY, JSON.stringify(list));
-            renderRecent();
-        } catch (e) {}
-    }
-
-    function renderRecent() {
-        const wrap = document.getElementById('sidebar-recent-wrap');
-        const box = document.getElementById('sidebar-recent-list');
-        if (!wrap || !box) return;
-        let list = [];
-        try { list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) {}
-        if (!list.length) {
-            wrap.classList.add('hidden');
-            return;
-        }
-        wrap.classList.remove('hidden');
-        const lang = I18nModule.getLang();
-        box.innerHTML = list.map((route) => {
-            const meta = BREADCRUMBS[route];
-            if (!meta) return '';
-            const full = meta[lang] || meta.ru;
-            const shortName = full.includes(' / ') ? full.split(' / ')[1] : full;
-            const active = route === currentRoute ? 'is-active' : '';
-            return `<button type="button" data-seo-route="${route}" class="recent-link-btn sidebar-item ${active}">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                <span class="truncate">${shortName}</span>
-            </button>`;
-        }).join('');
-        box.querySelectorAll('.recent-link-btn').forEach((btn) => {
-            btn.addEventListener('click', () => navigateSeo(btn.dataset.seoRoute));
-        });
-    }
 
     function navigateSeo(path, skipHistory = false) {
         currentRoute = path;
@@ -409,7 +372,6 @@ const RouterModule = (() => {
         if (meta.view === 'media') setMediaSubtab(meta.subtab || 'gif');
         setSidebarOpen(false);
         document.querySelectorAll('.nav-dropdown.is-open').forEach((el) => el.classList.remove('is-open'));
-        pushRecent(path);
         refreshSeoHeader();
         if (path !== '/') StateModule.trackEvent('open_tool', { route: path });
         // Реальные SEO URL через history.pushState (безопасно для file://)
@@ -467,7 +429,7 @@ const RouterModule = (() => {
                     ? `https://neon-hub.ru${currentRoute}`
                     : `${window.location.origin}${currentRoute}`;
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(url).then(() => StateModule.toast('Ссылка скопирована!', 'success')).catch(() => {});
+                    navigator.clipboard.writeText(url).then(() => StateModule.toast(I18nModule.getLang() === 'ru' ? 'Ссылка скопирована!' : 'Link copied!', 'success')).catch(() => {});
                 } else {
                     StateModule.toast(url, 'info');
                 }
@@ -538,6 +500,23 @@ const RouterModule = (() => {
 window.RouterModule = RouterModule;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Сворачивание левой панели на десктопе
+    const SIDEBAR_COLLAPSED_KEY = 'neonhub-sidebar-collapsed';
+    const appSidebarEl = document.getElementById('app-sidebar');
+    const collapseBtn = document.getElementById('sidebar-collapse-btn');
+    if (appSidebarEl && collapseBtn) {
+        try {
+            if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1') {
+                appSidebarEl.classList.add('is-collapsed');
+            }
+        } catch (e) {}
+        collapseBtn.addEventListener('click', () => {
+            const collapsed = appSidebarEl.classList.toggle('is-collapsed');
+            try { localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? '1' : '0'); } catch (e) {}
+        });
+    }
+
     // Переключатель темы
     document.getElementById('theme-toggle').addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
@@ -597,7 +576,7 @@ const UiEnhancementsModule = (() => {
         '/clean-pdf-text': { ru: ['Очистка текста из PDF', 'Склеивает разорванные переносы слов, убирает лишние разрывы строк и номера страниц.'], en: ['PDF Text Cleaner', 'Fixes broken line breaks, hyphenated words, and stray page numbers from PDFs.'] },
         '/compare-documents': { ru: ['Сравнение текстов (Diff)', 'Наглядно показывает все отличия «Было / Стало» по строкам и отдельным словам.'], en: ['Compare Texts (Diff)', 'Side-by-side line and word comparison between two text versions.'] },
         '/tables-converter': { ru: ['Конвертер таблиц (Excel)', 'Конвертирует CSV ↔ JSON ↔ Excel (.xlsx), удаляет дубликаты и сортирует столбцы.'], en: ['Tables Converter', 'Convert CSV ↔ JSON ↔ Excel (.xlsx), deduplicate, trim, and sort columns.'] },
-        '/pdf-tools': { ru: ['PDF-комбайн', 'Объединяет несколько PDF, вырезает нужные страницы по диапазону и поворачивает их.'], en: ['PDF Toolkit', 'Merge multiple PDFs, extract page ranges, and rotate pages locally.'] },
+        '/pdf-tools': { ru: ['PDF-инструменты', 'Объединяет несколько PDF, вырезает нужные страницы по диапазону и поворачивает их.'], en: ['PDF Toolkit', 'Merge multiple PDFs, extract page ranges, and rotate pages locally.'] },
         '/code-formatter': { ru: ['Форматтер JSON / XML / SQL', 'Красиво форматирует, проверяет на ошибки синтаксиса и сжимает (Minify) код.'], en: ['Code Formatter', 'Prettify, validate syntax, and minify JSON, XML, and SQL locally.'] },
         '/video-to-gif': { ru: ['Конвертер видео в GIF', 'Вырезает отрезок 1–10 секунд из MP4/WebM и собирает GIF встроенным кодером.'], en: ['Video to GIF', 'Turn a 1–10s video clip into a looping GIF using the built-in local encoder.'] },
         '/audio-surgeon': { ru: ['Удаление пауз в аудио', 'Встроенный диктофон и автоматическое вырезание тишины и длинных пауз на звуковой волне.'], en: ['Audio Silence Trimmer', 'Record voice and automatically cut out silent pauses on the waveform.'] },
@@ -666,6 +645,7 @@ const UiEnhancementsModule = (() => {
                 b.classList.toggle('dark:text-white', active);
                 b.classList.toggle('font-semibold', active);
                 b.classList.toggle('shadow-sm', active);
+            b.classList.toggle('subtab-active', active);
                 b.classList.toggle('text-slate-600', !active);
                 b.classList.toggle('dark:text-slate-400', !active);
             });

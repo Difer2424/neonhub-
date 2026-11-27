@@ -62,7 +62,8 @@ const StateModule = (() => {
 
             ctx.fillStyle = '#E3E3E3';
             ctx.font = 'bold 18px "Golos Text", Inter, sans-serif';
-            ctx.fillText('Квитанция #DEMO-0000  •  Вымышленный заказ', 58, 72);
+            const isEn = window.I18nModule && I18nModule.getLang() === 'en';
+            ctx.fillText(isEn ? 'Receipt #DEMO-0000  •  Fictional Order' : 'Квитанция #DEMO-0000  •  Вымышленный заказ', 58, 72);
 
             // Бейдж DEMO справа
             ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
@@ -74,12 +75,12 @@ const StateModule = (() => {
             ctx.fillText('TEST DATA', 657, 70);
 
             const rows = [
-                ['Получатель:', 'Капитан Орион Звёздный'],
-                ['Код связи:', '+0 (000) 000-00-00'],
-                ['Карта-макет:', '0000 •••• •••• 0000'],
-                ['Почта:', 'orion.demo@fictional.local'],
-                ['Адрес доставки:', 'г. Нео-Сити, ул. Облачная, д. 404, кв. 0'],
-                ['Итого:', '42 000 кредитов (Вымышленный чек)']
+                [isEn ? 'Recipient:' : 'Получатель:', isEn ? 'Captain Orion Starlight' : 'Капитан Орион Звёздный'],
+                [isEn ? 'Comm ID:' : 'Код связи:', '+0 (000) 000-00-00'],
+                [isEn ? 'Mock Card:' : 'Карта-макет:', '0000 •••• •••• 0000'],
+                [isEn ? 'Email:' : 'Почта:', 'orion.demo@fictional.local'],
+                [isEn ? 'Address:' : 'Адрес доставки:', isEn ? 'Neo-City, 404 Cloud St, Apt 0' : 'г. Нео-Сити, ул. Облачная, д. 404, кв. 0'],
+                [isEn ? 'Total:' : 'Итого:', isEn ? '42,000 credits (Fictional receipt)' : '42 000 кредитов (Вымышленный чек)']
             ];
 
             rows.forEach(([label, val], idx) => {
@@ -116,7 +117,7 @@ const StateModule = (() => {
         if (!el) return;
         const total = getProcessedBytes();
         if (total > 0) {
-            el.textContent = `Обработано локально: ${formatBytes(total)}`;
+            el.textContent = (window.I18nModule && I18nModule.getLang() === 'en') ? `Processed locally: ${formatBytes(total)}` : `Обработано локально: ${formatBytes(total)}`;
             el.classList.remove('hidden');
         }
     }
@@ -137,6 +138,8 @@ const StateModule = (() => {
             }
         } catch (e) {}
     }
+
+    function refreshCounterLabel() { addProcessedBytes(0); }
 
     return { formatBytes, escapeHtml, toast, createDemoScreenshotBlob, trackProcessed, updateProcessedBadge, trackEvent };
 })();

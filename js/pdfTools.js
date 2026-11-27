@@ -25,12 +25,12 @@ const PdfToolsModule = (() => {
 
     async function addFiles(files) {
         if (typeof PDFLib === 'undefined') {
-            StateModule.toast('Библиотека pdf-lib не загрузилась', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Библиотека pdf-lib не загрузилась' : 'pdf-lib library failed to load', 'warn');
             return;
         }
         const pdfs = files.filter((f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
         if (!pdfs.length) {
-            StateModule.toast('Выберите PDF-файлы (.pdf)', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Выберите PDF-файлы (.pdf)' : 'Please select PDF files (.pdf)', 'warn');
             return;
         }
         for (const f of pdfs) {
@@ -39,11 +39,11 @@ const PdfToolsModule = (() => {
                 const doc = await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true });
                 pdfItems.push({ file: f, name: f.name, pages: doc.getPageCount(), bytes });
             } catch (e) {
-                StateModule.toast(`Не удалось открыть ${f.name}`, 'warn');
+                StateModule.toast(I18nModule.getLang() === 'ru' ? `Не удалось открыть ${f.name}` : `Failed to open ${f.name}`, 'warn');
             }
         }
         render();
-        StateModule.toast(`Добавлено PDF: ${pdfs.length}`, 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? `Добавлено PDF: ${pdfs.length}` : `Added PDFs: ${pdfs.length}`, 'success');
     }
 
     function render() {
@@ -52,12 +52,12 @@ const PdfToolsModule = (() => {
         const buildBtn = document.getElementById('pdf-build-btn');
 
         const totalPages = pdfItems.reduce((s, it) => s + it.pages, 0);
-        info.textContent = `${pdfItems.length} файлов • ${totalPages} стр.`;
+        info.textContent = I18nModule.getLang() === 'ru' ? `${pdfItems.length} файлов • ${totalPages} стр.` : `${pdfItems.length} files • ${totalPages} pages`;
         buildBtn.disabled = pdfItems.length === 0;
 
         if (!pdfItems.length) {
             list.innerHTML = `<div class="text-center text-xs text-zinc-500 py-8">
-                Перетащите один или несколько PDF-файлов сюда, чтобы объединить их, вырезать нужные страницы или повернуть.
+                ${I18nModule.getLang() === 'ru' ? 'Перетащите один или несколько PDF-файлов сюда, чтобы объединить их, вырезать нужные страницы или повернуть.' : 'Drop one or more PDF files here to merge, extract page ranges, or rotate pages.'}
             </div>`;
             return;
         }
@@ -66,11 +66,11 @@ const PdfToolsModule = (() => {
             <div class="flex items-center justify-between gap-3 p-3 rounded-2xl lab-input text-xs">
                 <div class="min-w-0 flex-1">
                     <div class="font-medium text-zinc-900 dark:text-zinc-100 truncate">${StateModule.escapeHtml(it.name)}</div>
-                    <div class="text-[11px] font-mono text-zinc-400">${it.pages} стр. • ${StateModule.formatBytes(it.file.size)}</div>
+                    <div class="text-[11px] font-mono text-zinc-400">${it.pages} ${I18nModule.getLang() === 'ru' ? 'стр.' : 'pages'} • ${StateModule.formatBytes(it.file.size)}</div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                    <button type="button" data-up="${idx}" class="pdf-up px-2 py-1 rounded-lg lab-segmented hover:opacity-80" title="Выше">↑</button>
-                    <button type="button" data-dn="${idx}" class="pdf-dn px-2 py-1 rounded-lg lab-segmented hover:opacity-80" title="Ниже">↓</button>
+                    <button type="button" data-up="${idx}" class="pdf-up px-2 py-1 rounded-lg lab-segmented hover:opacity-80" title="${I18nModule.getLang() === 'ru' ? 'Выше' : 'Move up'}">↑</button>
+                    <button type="button" data-dn="${idx}" class="pdf-dn px-2 py-1 rounded-lg lab-segmented hover:opacity-80" title="${I18nModule.getLang() === 'ru' ? 'Ниже' : 'Move down'}">↓</button>
                     <button type="button" data-rm="${idx}" class="pdf-rm px-2 py-1 text-rose-500 hover:underline">×</button>
                 </div>
             </div>
@@ -144,7 +144,7 @@ const PdfToolsModule = (() => {
                 const total = merged.getPageCount();
                 const keep = parsePageRange(rangeStr, total);
                 if (!keep.length) {
-                    StateModule.toast('Укажите корректный диапазон страниц', 'warn');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'Укажите корректный диапазон страниц' : 'Enter a valid page range', 'warn');
                     btn.disabled = false;
                     return;
                 }
@@ -167,9 +167,9 @@ const PdfToolsModule = (() => {
             a.download = pdfItems.length > 1 ? 'neonhub-merged.pdf' : 'neonhub-edited.pdf';
             a.click();
             URL.revokeObjectURL(a.href);
-            StateModule.toast(`PDF готов (${finalDoc.getPageCount()} стр.)!`, 'success');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? `PDF готов (${finalDoc.getPageCount()} стр.)!` : `PDF ready (${finalDoc.getPageCount()} pages)!`, 'success');
         } catch (err) {
-            StateModule.toast('Ошибка при сборке PDF', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Ошибка при сборке PDF' : 'Error building PDF', 'warn');
         } finally {
             btn.disabled = false;
         }

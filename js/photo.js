@@ -185,12 +185,12 @@ const CensorModule = (() => {
             if (hasExif) {
                 dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
                 txt.textContent = isRu
-                    ? 'Обнаружен EXIF (камера/дата/GPS) — будет полностью удалён при сохранении.'
+                    ? (I18nModule.getLang() === 'ru' ? 'Обнаружен EXIF (камера/дата/GPS) — будет полностью удалён при сохранении.' : 'EXIF found (camera/date/GPS) — will be stripped completely on save.')
                     : 'EXIF metadata detected (camera/date/GPS) — will be stripped on export.';
             } else {
                 dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                 txt.textContent = isRu
-                    ? 'EXIF не найден (чистый файл). При экспорте в PNG метаданные также гарантированно очищаются.'
+                    ? (I18nModule.getLang() === 'ru' ? 'EXIF не найден (чистый файл). При экспорте в PNG метаданные также гарантированно очищаются.' : 'No EXIF found (clean file). PNG export also guarantees metadata removal.')
                     : 'No EXIF found. PNG export also guarantees zero metadata.';
             }
         } catch (e) {}
@@ -330,6 +330,8 @@ const ResizerModule = (() => {
 
         document.querySelectorAll('.preset-btn').forEach((btn) => {
             btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach((b) => b.classList.remove('is-selected'));
+                btn.classList.add('is-selected');
                 document.getElementById('resizer-w').value = btn.dataset.w;
                 document.getElementById('resizer-h').value = btn.dataset.h;
                 render();
@@ -506,7 +508,7 @@ const PhotoCompressModule = (() => {
     async function addFiles(files) {
         const imgs = files.filter((f) => f.type.startsWith('image/'));
         if (!imgs.length) {
-            StateModule.toast('Выберите изображения (PNG / JPG / WebP)', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Выберите изображения (PNG / JPG / WebP)' : 'Select images (PNG / JPG / WebP)', 'warn');
             return;
         }
         const fmt = document.getElementById('pcomp-format').value;
@@ -519,7 +521,7 @@ const PhotoCompressModule = (() => {
             if (res) items.push(res);
         }
         render();
-        StateModule.toast(`Обработано фото: ${imgs.length}`, 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? `Обработано фото: ${imgs.length}` : `Processed photos: ${imgs.length}`, 'success');
     }
 
     async function reprocessAll() {
@@ -542,8 +544,8 @@ const PhotoCompressModule = (() => {
         if (!items.length) {
             bar.classList.add('hidden');
             list.innerHTML = `<div class="text-center space-y-2 py-8">
-                <p class="text-sm font-medium text-zinc-700 dark:text-zinc-200">Перетащите сюда от 1 до 50 фотографий</p>
-                <p class="text-xs text-zinc-500">Конвертация в WebP / JPG / PNG и сжатие происходят локально в браузере без потери приватности</p>
+                <p class="text-sm font-medium text-zinc-700 dark:text-zinc-200">${I18nModule.getLang() === 'ru' ? 'Перетащите сюда от 1 до 50 фотографий' : 'Drop 1 to 50 photos here'}</p>
+                <p class="text-xs text-zinc-500">${I18nModule.getLang() === 'ru' ? 'Конвертация в WebP / JPG / PNG и сжатие происходят локально в браузере без потери приватности' : 'WebP / JPG / PNG conversion and compression run locally in your browser'}</p>
             </div>`;
             return;
         }
@@ -553,7 +555,7 @@ const PhotoCompressModule = (() => {
         const totalNew = items.reduce((s, x) => s + x.newSize, 0);
         const pct = totalOrig > 0 ? Math.round((1 - totalNew / totalOrig) * 100) : 0;
 
-        document.getElementById('pcomp-total-count').textContent = `${items.length} фото`;
+        document.getElementById('pcomp-total-count').textContent = I18nModule.getLang() === 'ru' ? `${items.length} фото` : `${items.length} photos`;
         document.getElementById('pcomp-size-diff').textContent = `${StateModule.formatBytes(totalOrig)} → ${StateModule.formatBytes(totalNew)} (${pct >= 0 ? '-' + pct : '+' + Math.abs(pct)}%)`;
 
         list.innerHTML = `<div class="divide-y divide-black/[0.06] dark:divide-white/[0.06]">` + items.map((it, idx) => {
@@ -602,7 +604,7 @@ const PhotoCompressModule = (() => {
             return;
         }
         if (typeof JSZip === 'undefined') {
-            StateModule.toast('JSZip не загрузился — скачивайте файлы по одному', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'JSZip не загрузился — скачивайте файлы по одному' : 'JSZip failed to load — download files one by one', 'warn');
             return;
         }
         const zip = new JSZip();
@@ -619,7 +621,7 @@ const PhotoCompressModule = (() => {
         a.download = 'neonhub-photos.zip';
         a.click();
         URL.revokeObjectURL(a.href);
-        StateModule.toast('ZIP-архив с фото скачан!', 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? 'ZIP-архив с фото скачан!' : 'Photo ZIP downloaded!', 'success');
     }
 
     return { init, addFiles };
@@ -663,7 +665,7 @@ const ScreenshotStitchModule = (() => {
                 a.download = 'neonhub-stitched.png';
                 a.click();
                 URL.revokeObjectURL(a.href);
-                StateModule.toast('Склеенное изображение сохранено!', 'success');
+                StateModule.toast(I18nModule.getLang() === 'ru' ? 'Склеенное изображение сохранено!' : 'Stitched image saved!', 'success');
             }, 'image/png');
         });
     }
@@ -687,7 +689,7 @@ const ScreenshotStitchModule = (() => {
     async function addFiles(files) {
         const valid = files.filter((f) => f.type.startsWith('image/'));
         if (!valid.length) {
-            StateModule.toast('Выберите изображения (PNG / JPG / WebP)', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Выберите изображения (PNG / JPG / WebP)' : 'Select images (PNG / JPG / WebP)', 'warn');
             return;
         }
         for (const f of valid) {
@@ -697,14 +699,14 @@ const ScreenshotStitchModule = (() => {
         }
         renderList();
         renderCanvas();
-        StateModule.toast(`Добавлено для склейки: ${valid.length}`, 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? `Добавлено для склейки: ${valid.length}` : `Added to stitch: ${valid.length}`, 'success');
     }
 
     function renderList() {
         const list = document.getElementById('stitch-file-list');
         document.getElementById('stitch-download-btn').disabled = images.length === 0;
         if (!images.length) {
-            list.innerHTML = '<div class="text-xs text-zinc-500 text-center py-4">Перетащите 2 или более скриншотов сюда</div>';
+            list.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">${I18nModule.getLang() === 'ru' ? 'Перетащите 2 или более скриншотов сюда' : 'Drop 2 or more screenshots here'}</div>`;
             return;
         }
         list.innerHTML = images.map((it, i) => `
@@ -819,7 +821,7 @@ const ScreenshotStitchModule = (() => {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
         placements.forEach((p) => drawRoundedImage(ctx, p.img, p.x, p.y, p.w, p.h, radius));
-        info.textContent = `${canvas.width} × ${canvas.height} px • ${images.length} фото`;
+        info.textContent = `${canvas.width} × ${canvas.height} px • ${images.length} ${I18nModule.getLang() === 'ru' ? 'фото' : 'photos'}`;
     }
 
     return { init, addFiles };
@@ -855,13 +857,13 @@ const BgRemoveModule = (() => {
             a.download = 'neonhub-no-bg.png';
             a.click();
             URL.revokeObjectURL(a.href);
-            StateModule.toast('PNG без фона сохранён!', 'success');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'PNG без фона сохранён!' : 'Transparent PNG saved!', 'success');
         });
     }
 
     function loadImageFile(file) {
         if (!file.type.startsWith('image/')) {
-            StateModule.toast('Выберите изображение', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Выберите изображение' : 'Select an image first', 'warn');
             return;
         }
         StateModule.trackProcessed(file.size);
@@ -889,23 +891,23 @@ const BgRemoveModule = (() => {
         const status = document.getElementById('rmbg-status');
         const aiBtn = document.getElementById('rmbg-ai-btn');
         aiBtn.disabled = true;
-        status.textContent = 'Загрузка локальной ИИ-модели (~40 МБ при 1-м запуске)...';
+        status.textContent = I18nModule.getLang() === 'ru' ? 'Загрузка локальной ИИ-модели (~40 МБ при 1-м запуске)...' : 'Loading local AI model (~40 MB on first run)...';
         try {
             const mod = await import('https://esm.sh/@imgly/background-removal@1.4.5');
             const removeBg = mod.removeBackground || mod.default;
             const blob = await removeBg(sourceFile, {
                 progress: (key, current, total) => {
-                    if (total > 0) status.textContent = `ИИ-обработка: ${Math.round((current / total) * 100)}%`;
+                    if (total > 0) status.textContent = I18nModule.getLang() === 'ru' ? `ИИ-обработка: ${Math.round((current / total) * 100)}%` : `AI processing: ${Math.round((current / total) * 100)}%`;
                 }
             });
             resultBlob = blob;
             document.getElementById('rmbg-preview').src = URL.createObjectURL(blob);
             document.getElementById('rmbg-download-btn').disabled = false;
-            status.textContent = 'Готово! Фон удалён нейросетью локально.';
-            StateModule.toast('Фон удалён!', 'success');
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Готово! Фон удалён нейросетью локально.' : 'Done! Background removed locally via AI.';
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Фон удалён!' : 'Background removed!', 'success');
         } catch (err) {
-            status.textContent = 'ИИ-модель недоступна офлайн — используйте «Быстрое удаление (однотонный фон)».';
-            StateModule.toast('Используйте быстрый режим для однотонного фона', 'warn');
+            status.textContent = I18nModule.getLang() === 'ru' ? 'ИИ-модель недоступна офлайн — используйте «Быстрое удаление (однотонный фон)».' : 'AI model unavailable offline — use Quick Remove (solid background).';
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Используйте быстрый режим для однотонного фона' : 'Use Quick Mode for solid backgrounds', 'warn');
         } finally {
             aiBtn.disabled = false;
         }
@@ -949,8 +951,8 @@ const BgRemoveModule = (() => {
             resultBlob = blob;
             document.getElementById('rmbg-preview').src = URL.createObjectURL(blob);
             document.getElementById('rmbg-download-btn').disabled = false;
-            document.getElementById('rmbg-status').textContent = `Готово (быстрый режим, допуск ${tol})`;
-            StateModule.toast('Однотонный фон удалён!', 'success');
+            document.getElementById('rmbg-status').textContent = I18nModule.getLang() === 'ru' ? `Готово (быстрый режим, допуск ${tol})` : `Done (quick mode, tolerance ${tol})`;
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Однотонный фон удалён!' : 'Solid background removed!', 'success');
         }, 'image/png');
     }
 

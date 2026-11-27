@@ -20,6 +20,7 @@ const QrGenModule = (() => {
                     b.classList.toggle('text-slate-900', active);
                     b.classList.toggle('dark:text-white', active);
                     b.classList.toggle('shadow-sm', active);
+                    b.classList.toggle('subtab-active', active);
                     b.classList.toggle('text-slate-500', !active);
                 });
                 ['url', 'wifi', 'tg'].forEach((m) => {
@@ -42,7 +43,7 @@ const QrGenModule = (() => {
             a.download = 'neonhub-qr.svg';
             a.click();
             URL.revokeObjectURL(a.href);
-            StateModule.toast('QR-код сохранён в SVG!', 'success');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'QR-код сохранён в SVG!' : 'QR code saved as SVG!', 'success');
         });
 
         document.getElementById('qrgen-dl-png').addEventListener('click', () => {
@@ -63,7 +64,7 @@ const QrGenModule = (() => {
                     a.download = 'neonhub-qr.png';
                     a.click();
                     URL.revokeObjectURL(a.href);
-                    StateModule.toast('QR-код сохранён в PNG (1024px)!', 'success');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'QR-код сохранён в PNG (1024px)!' : 'QR code saved as PNG (1024px)!', 'success');
                 }, 'image/png');
             };
             img.src = url;
@@ -97,7 +98,7 @@ const QrGenModule = (() => {
         preview.style.backgroundColor = bg;
 
         if (typeof qrcode === 'undefined') {
-            preview.innerHTML = '<span class="text-xs text-zinc-400">QR-библиотека загружается...</span>';
+            preview.innerHTML = `<span class="text-xs text-zinc-400">${I18nModule.getLang() === 'ru' ? 'QR-библиотека загружается...' : 'Loading QR library...'}</span>`;
             return;
         }
         try {
@@ -118,7 +119,7 @@ const QrGenModule = (() => {
             lastSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">${rects}</svg>`;
             preview.innerHTML = lastSvg.replace('<svg ', '<svg class="w-full h-full" ');
         } catch (e) {
-            preview.innerHTML = '<span class="text-xs text-rose-500">Слишком длинный текст для QR</span>';
+            preview.innerHTML = `<span class="text-xs text-rose-500">${I18nModule.getLang() === 'ru' ? 'Слишком длинный текст для QR' : 'Text is too long for QR'}</span>`;
         }
     }
 

@@ -16,7 +16,7 @@
                         const target = document.getElementById(btn.dataset.copyTarget);
                         if (!target || !target.value) return;
                         target.select();
-                        try { document.execCommand('copy'); StateModule.toast('Скопировано!', 'success'); } catch (e) {}
+                        try { document.execCommand('copy'); StateModule.toast(I18nModule.getLang() === 'ru' ? 'Скопировано!' : 'Copied!', 'success'); } catch (e) {}
                     });
                 });
 
@@ -58,7 +58,7 @@
                             if (pickedColors.length > 10) pickedColors.pop();
                             renderPickerHistory();
                         }
-                        StateModule.toast(`Выбран цвет ${hex}`, 'success');
+                        StateModule.toast(I18nModule.getLang() === 'ru' ? `Выбран цвет ${hex}` : `Picked color ${hex}`, 'success');
                     }
                 };
 
@@ -95,7 +95,7 @@
                     if (!f) return;
                     document.getElementById('sha-file-label').textContent = f.name;
                     document.getElementById('sha-output').value = await computeSha256(await f.arrayBuffer());
-                    StateModule.toast('SHA-256 файла вычислен!', 'success');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'SHA-256 файла вычислен!' : 'File SHA-256 calculated!', 'success');
                 });
 
                 // 5. Конвертер единиц (px ↔ мм / см / in / pt)
@@ -203,8 +203,8 @@
 
                 const results = [
                     ['px', (inches * dpi).toFixed(1)],
-                    ['мм', (inches * 25.4).toFixed(2)],
-                    ['см', (inches * 2.54).toFixed(3)],
+                    [I18nModule.getLang() === 'ru' ? 'мм' : 'mm', (inches * 25.4).toFixed(2)],
+                    [I18nModule.getLang() === 'ru' ? 'см' : 'cm', (inches * 2.54).toFixed(3)],
                     ['in', inches.toFixed(3)],
                     ['pt', (inches * 72).toFixed(1)]
                 ];
@@ -220,7 +220,7 @@
                 if (!f) return;
                 document.getElementById('sha-file-label').textContent = f.name;
                 document.getElementById('sha-output').value = await computeSha256(await f.arrayBuffer());
-                StateModule.toast('SHA-256 файла вычислен!', 'success');
+                StateModule.toast(I18nModule.getLang() === 'ru' ? 'SHA-256 файла вычислен!' : 'File SHA-256 calculated!', 'success');
             }
 
             return { init, loadPickerImage, loadShaFile };
@@ -282,7 +282,7 @@
                 const sendBtn = document.getElementById('transfer-send-btn');
                 if (sendBtn) sendBtn.disabled = !queue.length || !activeConn;
                 if (!queue.length) {
-                    list.innerHTML = 'Очередь пуста — добавьте файл или перетащите его прямо в это окно.';
+                    list.innerHTML = I18nModule.getLang() === 'ru' ? 'Очередь пуста — добавьте файл или перетащите его прямо в это окно.' : 'Queue is empty — add a file or drop it right into this window.';
                     return;
                 }
                 list.innerHTML = queue.map((f, idx) => `
@@ -325,9 +325,9 @@
             function bindConnection(conn) {
                 activeConn = conn;
                 conn.on('open', () => {
-                    setStatus('Устройство подключено (P2P)', 'ok');
+                    setStatus(I18nModule.getLang() === 'ru' ? 'Устройство подключено (P2P)' : 'Device connected (P2P)', 'ok');
                     renderQueue();
-                    StateModule.toast('Прямое P2P-соединение установлено!', 'success');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'Прямое P2P-соединение установлено!' : 'Direct P2P connection established!', 'success');
                 });
                 conn.on('data', (payload) => {
                     if (payload && payload.kind === 'file' && payload.data) {
@@ -336,12 +336,12 @@
                         received.unshift({ name: payload.name || 'file', size: blob.size, url });
                         StateModule.trackProcessed(blob.size);
                         renderReceived();
-                        StateModule.toast(`Получен файл: ${payload.name}`, 'success');
+                        StateModule.toast(I18nModule.getLang() === 'ru' ? `Получен файл: ${payload.name}` : `Received file: ${payload.name}`, 'success');
                     }
                 });
                 conn.on('close', () => {
                     activeConn = null;
-                    setStatus('Соединение закрыто', 'warn');
+                    setStatus(I18nModule.getLang() === 'ru' ? 'Соединение закрыто' : 'Connection closed', 'warn');
                     renderQueue();
                 });
             }
@@ -356,10 +356,10 @@
                         activeConn.send({ kind: 'file', name: f.name, type: f.type, data: buf });
                         StateModule.trackProcessed(f.size);
                     }
-                    StateModule.toast(`Отправлено файлов: ${queue.length}`, 'success');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? `Отправлено файлов: ${queue.length}` : `Files sent: ${queue.length}`, 'success');
                     StateModule.trackEvent('p2p_send', { count: queue.length });
                 } catch (e) {
-                    StateModule.toast('Ошибка отправки по P2P', 'warn');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'Ошибка отправки по P2P' : 'P2P transfer error', 'warn');
                 } finally {
                     sendBtn.disabled = false;
                 }
@@ -396,36 +396,37 @@
             function startHostRoom() {
                 if (peer) { try { peer.destroy(); } catch (e) {} peer = null; }
                 activeConn = null;
-                roomCode = 'PL-' + Math.floor(1000 + Math.random() * 9000);
+                roomCode = 'NH-' + Math.floor(1000 + Math.random() * 9000);
                 drawQrForRoom(roomCode);
                 renderQueue();
 
                 if (typeof Peer === 'undefined') {
-                    setStatus('Офлайн-режим (PeerJS недоступен)', 'warn');
+                    setStatus(I18nModule.getLang() === 'ru' ? 'Офлайн-режим (PeerJS недоступен)' : 'Offline mode (PeerJS unavailable)', 'warn');
                     return;
                 }
-                setStatus('Ожидание подключения…', 'neutral');
+                setStatus(I18nModule.getLang() === 'ru' ? 'Ожидание подключения…' : 'Waiting for connection…', 'neutral');
                 peer = new Peer('neonhub-' + roomCode.toLowerCase());
-                peer.on('open', () => setStatus('Комната готова • сканируйте QR', 'neutral'));
+                peer.on('open', () => setStatus(I18nModule.getLang() === 'ru' ? 'Комната готова • сканируйте QR' : 'Room ready • scan QR', 'neutral'));
                 peer.on('connection', (conn) => bindConnection(conn));
-                peer.on('error', () => setStatus('P2P-сервер недоступен в текущей сети', 'warn'));
+                peer.on('error', () => setStatus(I18nModule.getLang() === 'ru' ? 'P2P-сервер недоступен в текущей сети' : 'P2P signaling server unreachable on current network', 'warn'));
             }
 
             function joinRoom(code) {
                 if (typeof Peer === 'undefined') {
-                    StateModule.toast('PeerJS не загрузился', 'warn');
+                    StateModule.toast(I18nModule.getLang() === 'ru' ? 'PeerJS не загрузился' : 'PeerJS failed to load', 'warn');
                     return;
                 }
                 if (peer) { try { peer.destroy(); } catch (e) {} peer = null; }
                 const clean = code.replace(/^NEONHUB-/i, '').toUpperCase();
-                setStatus(`Подключение к ${clean}…`, 'neutral');
+                setStatus(I18nModule.getLang() === 'ru' ? `Подключение к ${clean}…` : `Connecting to ${clean}…`, 'neutral');
                 peer = new Peer();
                 peer.on('open', () => {
                     const conn = peer.connect('neonhub-' + clean.toLowerCase(), { reliable: true });
                     bindConnection(conn);
                 });
-                peer.on('error', () => setStatus('Не удалось подключиться к комнате', 'warn'));
+                peer.on('error', () => setStatus(I18nModule.getLang() === 'ru' ? 'Не удалось подключиться к комнате' : 'Could not connect to room', 'warn'));
             }
+
 
             return { init, enqueueFile };
         })();

@@ -13,7 +13,7 @@
     --pill-active-bg: #18181B;
     --pill-active-text: #FFFFFF;
     --shadow-card: 0 2px 5px rgba(15, 23, 42, 0.06), 0 10px 24px -14px rgba(15, 23, 42, 0.14);
-    --shadow-card-hover: 0 6px 18px -4px rgba(15, 23, 42, 0.14), 0 16px 32px -12px rgba(124, 58, 237, 0.14);
+    --shadow-card-hover: 0 6px 18px -4px rgba(15, 23, 42, 0.14), 0 16px 32px -12px rgba(250, 204, 21, 0.14);
 }
 
 .dark {
@@ -53,7 +53,7 @@ body {
     padding: 0.25rem 0.75rem;
     margin-bottom: 0.35rem;
     font-size: 0.6875rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "JetBrains Mono", monospace;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -178,7 +178,7 @@ body {
 }
 
 .lab-btn-emerald {
-    background: #10B981;
+    background: #EAB308;
     color: #042016;
     font-weight: 600;
     transition: filter 0.15s ease, transform 0.15s ease;
@@ -198,16 +198,16 @@ body {
     position: absolute;
     inset: -40% -10% auto -10%;
     height: 220px;
-    background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.16), rgba(6, 182, 212, 0.08) 45%, transparent 72%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(250, 204, 21, 0.16), rgba(6, 182, 212, 0.08) 45%, transparent 72%);
     pointer-events: none;
     z-index: 0;
 }
 .dark .hero-ambient::before {
-    background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.22), rgba(255, 59, 141, 0.10) 45%, transparent 72%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(250, 204, 21, 0.22), rgba(250, 204, 21, 0.10) 45%, transparent 72%);
 }
 
 .neon-text-gradient {
-    background: linear-gradient(120deg, #FF3B8D 0%, #7C3AED 50%, #06B6D4 100%);
+    background: linear-gradient(120deg, #EAB308 0%, #EAB308 50%, #A1A1AA 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -262,8 +262,8 @@ body {
 .dropzone-reactor:hover,
 .dropzone-reactor.is-dragover {
     border-style: solid;
-    border-color: #7C3AED;
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14), var(--shadow-card-hover);
+    border-color: #EAB308;
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.14), var(--shadow-card-hover);
 }
 .dark .dropzone-reactor:hover,
 .dark .dropzone-reactor.is-dragover {
@@ -276,7 +276,7 @@ body {
     transition: outline-color 0.15s ease;
 }
 .tool-drop-target.is-dragover {
-    outline: 2px dashed #7C3AED;
+    outline: 2px dashed #EAB308;
     outline-offset: 6px;
     border-radius: 1.25rem;
 }
@@ -333,7 +333,7 @@ body {
     transition: background-color 0.15s ease;
 }
 .deai-chip:has(input:checked) .deai-chip-dot {
-    background: #10B981;
+    background: #EAB308;
 }
 
 /* Интерактивный эффект блюра на карточке Цензора */
@@ -385,7 +385,7 @@ body {
    HOME PAGE V7: SPLIT STUDIO HERO + SHOWCASE FEATURE TILES
 ========================================================================= */
 .font-display {
-    font-family: "Unbounded", "Onest", sans-serif;
+    font-family: "Rubik", "Golos Text", sans-serif;
 }
 
 /* Новые объёмные плитки главных функций */
@@ -401,7 +401,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(240px circle at 100% 0%, var(--tile-glow, rgba(124, 58, 237, 0.14)), transparent 70%);
+    background: radial-gradient(240px circle at 100% 0%, var(--tile-glow, rgba(250, 204, 21, 0.14)), transparent 70%);
     opacity: 0.45;
     transition: opacity 0.24s ease;
     pointer-events: none;
@@ -448,11 +448,966 @@ body {
     transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 .hero-spotlight-btn:hover {
-    border-color: #7C3AED;
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14), var(--shadow-card-hover);
+    border-color: #EAB308;
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.14), var(--shadow-card-hover);
     transform: translateY(-1px);
 }
 
 /* Скрытый скроллбар для мобильных горизонтальных вкладок */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+
+/* =========================================================================
+   MODERN STUDIO UI POLISH (PANELS, PRESET TILES, TABS, CONTROLS)
+========================================================================= */
+.lab-panel {
+    border-radius: 1.35rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.94) 100%);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 28px -16px rgba(15, 23, 42, 0.16);
+}
+.dark .lab-panel {
+    background: linear-gradient(180deg, rgba(32, 33, 37, 0.94) 0%, rgba(24, 25, 28, 0.96) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 34px -18px rgba(0, 0, 0, 0.85);
+}
+
+.lab-segmented {
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.95rem;
+    padding: 0.25rem;
+}
+.dark .lab-segmented {
+    background: rgba(14, 15, 17, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.photo-subtab, .text-subtab, .media-subtab, .qrgen-mode-btn, .codefmt-mode-btn {
+    border-radius: 0.7rem !important;
+    transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Современные тактильные плитки пресетов */
+.preset-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.45rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.95rem;
+    text-align: left;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.preset-tile:hover {
+    transform: translateY(-2px);
+    border-color: rgba(250, 204, 21, 0.45);
+    box-shadow: 0 8px 20px -10px rgba(250, 204, 21, 0.35);
+}
+.dark .preset-tile {
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+.dark .preset-tile:hover {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(250, 204, 21, 0.45);
+}
+.preset-tile.is-selected {
+    background: rgba(250, 204, 21, 0.09);
+    border-color: #EAB308;
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.25), 0 8px 20px -10px rgba(250, 204, 21, 0.4);
+}
+.dark .preset-tile.is-selected {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.20) 0%, rgba(6, 182, 212, 0.10) 100%);
+    border-color: rgba(250, 204, 21, 0.65);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 22px -10px rgba(250, 204, 21, 0.5);
+}
+
+/* Второстепенные кнопки с мягкой поверхностью */
+.lab-btn-secondary {
+    background: rgba(15, 23, 42, 0.045);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    color: var(--text-primary);
+    transition: all 0.16s ease;
+}
+.lab-btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.20);
+}
+.dark .lab-btn-secondary {
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #E4E4E7;
+}
+.dark .lab-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.20);
+}
+
+.lab-input {
+    border-radius: 0.85rem;
+    border-color: rgba(15, 23, 42, 0.11);
+}
+.dark .lab-input {
+    background: rgba(15, 16, 18, 0.72);
+    border-color: rgba(255, 255, 255, 0.09);
+}
+.dark .lab-input:focus {
+    background: rgba(22, 23, 27, 0.95);
+    border-color: rgba(250, 204, 21, 0.55);
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.18);
+}
+
+.lab-canvas-stage {
+    border-radius: 1.35rem;
+    border: 1px solid rgba(15, 23, 42, 0.11);
+    box-shadow: inset 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+.dark .lab-canvas-stage {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.lab-btn-primary {
+    border-radius: 0.85rem;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.25);
+}
+.lab-btn-emerald {
+    border-radius: 0.85rem;
+    background: linear-gradient(135deg, #EAB308 0%, #CA8A04 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px -4px rgba(250, 204, 21, 0.55);
+}
+.lab-btn-emerald:hover {
+    filter: brightness(1.07);
+    box-shadow: 0 6px 18px -4px rgba(250, 204, 21, 0.7);
+}
+
+
+/* =========================================================================
+   NEON HUB 2027 — ELEVATED OBSIDIAN & STUDIO GLASS POLISH
+========================================================================= */
+body {
+    background-image:
+        radial-gradient(900px circle at 15% -5%, rgba(250, 204, 21, 0.06), transparent 60%),
+        radial-gradient(700px circle at 92% 8%, rgba(250, 204, 21, 0.05), transparent 55%);
+    background-attachment: fixed;
+}
+.dark body {
+    background-image:
+        radial-gradient(950px circle at 18% -8%, rgba(250, 204, 21, 0.11), transparent 60%),
+        radial-gradient(750px circle at 90% 10%, rgba(250, 204, 21, 0.07), transparent 55%);
+}
+
+/* Более живой и аккуратный сайдбар */
+.studio-sidebar {
+    background: linear-gradient(180deg, rgba(244, 246, 251, 0.94) 0%, rgba(236, 239, 245, 0.96) 100%);
+    backdrop-filter: blur(18px);
+}
+.dark .studio-sidebar {
+    background: linear-gradient(180deg, rgba(24, 25, 28, 0.95) 0%, rgba(18, 19, 21, 0.98) 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.sidebar-item.is-active {
+    background: linear-gradient(135deg, #18181B 0%, #27272A 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.dark .sidebar-item.is-active {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.24) 0%, rgba(255, 255, 255, 0.09) 100%);
+    border: 1px solid rgba(250, 204, 21, 0.32);
+    color: #FFFFFF;
+    box-shadow: 0 6px 18px -6px rgba(250, 204, 21, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Активные вкладки инструментов (подсветка + мягкий объём) */
+.subtab-active {
+    background: #FFFFFF !important;
+    color: #111318 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(15, 23, 42, 0.06) !important;
+}
+.dark .subtab-active {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.28) 0%, rgba(255, 255, 255, 0.10) 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px -4px rgba(250, 204, 21, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px rgba(250, 204, 21, 0.35) !important;
+}
+
+/* Иконка заголовка раздела с лёгким неоновым свечением */
+.lab-icon-box {
+    border-radius: 0.95rem;
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.12) 0%, rgba(6, 182, 212, 0.10) 100%);
+    border: 1px solid rgba(250, 204, 21, 0.22);
+    color: #6D28D9;
+    box-shadow: 0 4px 14px -6px rgba(250, 204, 21, 0.45);
+}
+.dark .lab-icon-box {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.22) 0%, rgba(250, 204, 21, 0.12) 100%);
+    border: 1px solid rgba(250, 204, 21, 0.28);
+    color: #FEF08A;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 6px 18px -6px rgba(250, 204, 21, 0.55);
+}
+
+/* Улучшенная зона загрузки файлов */
+.dropzone-reactor {
+    border-radius: 1.35rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 246, 251, 0.88) 100%);
+    border: 1.5px dashed rgba(250, 204, 21, 0.35);
+}
+.dark .dropzone-reactor {
+    background: linear-gradient(180deg, rgba(28, 29, 33, 0.90) 0%, rgba(20, 21, 24, 0.94) 100%);
+    border: 1.5px dashed rgba(250, 204, 21, 0.28);
+}
+.dropzone-reactor:hover,
+.dropzone-reactor.is-dragover {
+    border-style: solid;
+    border-color: #FACC15;
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.16), 0 18px 38px -14px rgba(250, 204, 21, 0.35);
+}
+
+/* Карточки витрины на главной */
+.feature-tile {
+    border-radius: 1.35rem;
+}
+.feature-tile:hover {
+    border-color: rgba(250, 204, 21, 0.42);
+    box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(250, 204, 21, 0.22);
+}
+
+/* Более аккуратные ползунки (range inputs) */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    border-radius: 9999px;
+    background: rgba(148, 163, 184, 0.28);
+    outline: none;
+}
+.dark input[type="range"] {
+    background: rgba(255, 255, 255, 0.12);
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 9999px;
+    background: #FACC15;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    transition: transform 0.14s ease, background-color 0.14s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    background: #FDE047;
+}
+
+/* Плавное появление активного экрана */
+@keyframes viewFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+main > section:not(.hidden),
+[id^="subview-"]:not(.hidden) {
+    animation: viewFadeIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================================
+   ARTLIST-INSPIRED EDITORIAL DARK & GOLD PILL AESTHETIC
+========================================================================= */
+.dark {
+    --bg-canvas: #0B0C0E;
+    --bg-sidebar: #111215;
+    --bg-surface: #15171B;
+    --bg-elevated: #1C1F24;
+    --bg-input: #101215;
+    --border-subtle: rgba(255, 255, 255, 0.075);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text-primary: #F3F4F6;
+    --text-muted: #9CA3AF;
+    --pill-active-bg: #1F2228;
+    --pill-active-text: #FFFFFF;
+}
+
+body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+}
+.dark body {
+    background-image:
+        radial-gradient(880px circle at 50% -12%, rgba(250, 204, 21, 0.06), transparent 62%),
+        radial-gradient(720px circle at 15% 15%, rgba(255, 255, 255, 0.025), transparent 55%);
+    background-attachment: fixed;
+}
+
+.font-display {
+    font-family: "Rubik", "Golos Text", Georgia, serif;
+    letter-spacing: -0.02em;
+}
+
+/* Тёмный минималистичный сайдбар как в студии Artlist */
+.studio-sidebar {
+    background: #F4F5F7;
+    border-right: 1px solid rgba(15, 23, 42, 0.08);
+}
+.dark .studio-sidebar {
+    background: #111215;
+    backdrop-filter: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sidebar-item {
+    border-radius: 0.65rem;
+    padding: 0.48rem 0.75rem;
+    font-size: 0.8125rem;
+}
+.dark .sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.045);
+    color: #FFFFFF;
+}
+.dark .sidebar-item.is-active {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    color: #FFFFFF;
+    box-shadow: none;
+}
+
+/* Чистые поверхности карточек без лишнего неонового шума */
+.lab-panel {
+    border-radius: 1.15rem;
+    background: #FFFFFF;
+    border: 1px solid rgba(15, 23, 42, 0.09);
+    box-shadow: 0 2px 10px -4px rgba(15, 23, 42, 0.08);
+}
+.dark .lab-panel {
+    background: #14161A;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.85);
+}
+
+.dark .lab-icon-box {
+    background: #1B1E24;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #FACC15;
+    box-shadow: none;
+}
+
+.dark .subtab-active {
+    background: #242830 !important;
+    color: #FFFFFF !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Золотая капсула-кнопка в стиле Artlist */
+.artlist-pill-cta {
+    background: linear-gradient(180deg, #FDE047 0%, #EAB308 100%);
+    color: #111215;
+    font-weight: 700;
+    border: 1px solid rgba(254, 240, 138, 0.45);
+    box-shadow: 0 4px 18px -4px rgba(234, 179, 8, 0.45);
+    transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+}
+.artlist-pill-cta:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px -4px rgba(234, 179, 8, 0.55);
+}
+
+.dark .preset-tile {
+    background: #181A1F;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 0.85rem;
+}
+.dark .preset-tile:hover {
+    background: #1E2128;
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 22px -12px rgba(0, 0, 0, 0.75);
+}
+.dark .preset-tile.is-selected {
+    background: #1E2128;
+    border-color: #FACC15;
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.25);
+}
+
+.dark .dropzone-reactor {
+    background: #131519;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 1.15rem;
+}
+.dark .dropzone-reactor:hover,
+.dark .dropzone-reactor.is-dragover {
+    border-color: #FACC15;
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.14), 0 16px 34px -14px rgba(0, 0, 0, 0.8);
+}
+
+.dark .feature-tile {
+    background: #14161A;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 1.15rem;
+}
+.dark .feature-tile::before {
+    background: radial-gradient(240px circle at 100% 0%, rgba(250, 204, 21, 0.07), transparent 72%);
+}
+.dark .feature-tile:hover {
+    background: #191C22;
+    border-color: rgba(255, 255, 255, 0.17);
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.85);
+}
+
+.dark input[type="range"]::-webkit-slider-thumb {
+    background: #FACC15;
+    border: 2px solid #111215;
+}
+.dark input[type="range"]::-webkit-slider-thumb:hover {
+    background: #FDE047;
+}
+
+
+
+
+
+/* =========================================================================
+   NEON HUB V16 — LIQUID WATER GLASS, CLEAN TOP PANEL & MINIMALIST CONTROLS
+========================================================================= */
+:root {
+    --bg-canvas: #E6E8EC;
+    --bg-sidebar: rgba(244, 245, 248, 0.72);
+    --bg-surface: rgba(255, 255, 255, 0.56);
+    --bg-elevated: rgba(228, 231, 236, 0.68);
+    --bg-input: rgba(255, 255, 255, 0.44);
+    --border-subtle: rgba(17, 17, 19, 0.11);
+    --border-strong: rgba(17, 17, 19, 0.22);
+    --text-primary: #111113;
+    --text-muted: #52525B;
+}
+
+.dark {
+    --bg-canvas: #0B0C0E;
+    --bg-sidebar: rgba(16, 17, 20, 0.68);
+    --bg-surface: rgba(24, 26, 30, 0.42);
+    --bg-elevated: rgba(34, 37, 43, 0.56);
+    --bg-input: rgba(14, 15, 18, 0.36);
+    --border-subtle: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --text-primary: #F4F4F5;
+    --text-muted: #A1A1AA;
+}
+
+/* Спокойный графитовый фон без фиолетовых переливов */
+body {
+    background-color: var(--bg-canvas) !important;
+    background-image: none !important;
+}
+.dark body {
+    background-color: #0B0C0E !important;
+    background-image: radial-gradient(760px circle at 50% -18%, rgba(255, 255, 255, 0.04), transparent 65%) !important;
+}
+
+.hero-ambient::before {
+    display: none !important;
+}
+
+/* «Водяное стекло» (Liquid Glass) для окон, панелей, полей ввода и выпадающих списков */
+.lab-panel,
+.nh-showcase-card,
+.feature-tile,
+.dropzone-reactor,
+#cmdk-modal > .lab-panel,
+#tool-hover-tooltip,
+details[open] {
+    border-radius: 1.2rem !important;
+    background: rgba(255, 255, 255, 0.56) !important;
+    backdrop-filter: blur(26px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(26px) saturate(160%) !important;
+    border: 1px solid rgba(17, 17, 19, 0.11) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 14px 32px -18px rgba(17, 17, 19, 0.18) !important;
+}
+
+.dark .lab-panel,
+.dark .nh-showcase-card,
+.dark .feature-tile,
+.dark .dropzone-reactor,
+.dark #cmdk-modal > .lab-panel,
+.dark #tool-hover-tooltip,
+.dark details[open] {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.065) 0%, rgba(20, 21, 25, 0.36) 55%, rgba(12, 13, 16, 0.48) 100%) !important;
+    backdrop-filter: blur(28px) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 18px 40px -20px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Прозрачные водяные поля ввода и раскрывающиеся списки */
+.lab-input,
+select.lab-input,
+textarea.lab-input,
+input.lab-input {
+    border-radius: 0.85rem !important;
+    background: rgba(255, 255, 255, 0.46) !important;
+    backdrop-filter: blur(16px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+    border: 1px solid rgba(17, 17, 19, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+.dark .lab-input,
+.dark select.lab-input,
+.dark textarea.lab-input,
+.dark input.lab-input {
+    background: rgba(255, 255, 255, 0.035) !important;
+    backdrop-filter: blur(18px) saturate(155%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(155%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.095) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+.lab-input:focus,
+.dark .lab-input:focus {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(250, 204, 21, 0.75) !important;
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.20) !important;
+}
+
+select option {
+    background-color: #18191D;
+    color: #F4F4F5;
+}
+
+.studio-sidebar {
+    background: rgba(244, 245, 248, 0.72) !important;
+    backdrop-filter: blur(24px) saturate(150%) !important;
+}
+.dark .studio-sidebar {
+    background: rgba(15, 16, 19, 0.68) !important;
+    backdrop-filter: blur(24px) saturate(150%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.studio-topbar {
+    background: rgba(230, 232, 236, 0.72) !important;
+    backdrop-filter: blur(22px) saturate(150%) !important;
+}
+.dark .studio-topbar {
+    background: rgba(11, 12, 14, 0.65) !important;
+    backdrop-filter: blur(22px) saturate(150%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Минималистичные кнопки: чистые, лёгкие, без громоздких теней */
+.lab-btn-secondary,
+.lab-segmented {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 0.8rem !important;
+    box-shadow: none !important;
+    transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+.lab-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(255, 255, 255, 0.20) !important;
+}
+
+.lab-btn-primary {
+    background: #F4F4F5 !important;
+    color: #111113 !important;
+    border: 1px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: 0.8rem !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+}
+.lab-btn-primary:hover {
+    background: #FFFFFF !important;
+}
+
+/* Главный акцент: плотный непрозрачный алый (#EAB308) на целевых кнопках и активных маркерах */
+.artlist-pill-cta,
+.lab-btn-emerald {
+    background: #EAB308 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #EAB308 !important;
+    border-radius: 0.85rem !important;
+    box-shadow: 0 4px 14px -4px rgba(250, 204, 21, 0.55) !important;
+    font-weight: 600 !important;
+}
+.artlist-pill-cta:hover,
+.lab-btn-emerald:hover {
+    background: #CA8A04 !important;
+    border-color: #CA8A04 !important;
+}
+
+.nh-word-hub,
+.neon-text-gradient {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: #FACC15 !important;
+    color: #FACC15 !important;
+    text-shadow: none !important;
+}
+
+.sidebar-item.is-active,
+.dark .sidebar-item.is-active {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 3px 0 0 #EAB308 !important;
+    color: #FFFFFF !important;
+}
+.sidebar-item.is-active svg,
+.dark .sidebar-item.is-active svg {
+    color: #FACC15 !important;
+}
+
+.subtab-active,
+.dark .subtab-active {
+    background: rgba(250, 204, 21, 0.18) !important;
+    border: 1px solid rgba(250, 204, 21, 0.65) !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+
+.preset-tile {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.085) !important;
+    border-radius: 0.85rem !important;
+    box-shadow: none !important;
+}
+.preset-tile:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.20) !important;
+}
+.preset-tile.is-selected,
+.dark .preset-tile.is-selected {
+    background: rgba(250, 204, 21, 0.16) !important;
+    border: 1px solid #EAB308 !important;
+    box-shadow: inset 3px 0 0 #EAB308 !important;
+    color: #FFFFFF !important;
+}
+.preset-tile.is-selected span:first-child {
+    color: #FFFFFF !important;
+}
+
+.deai-chip {
+    background: rgba(255, 255, 255, 0.035) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: none !important;
+}
+.deai-chip:has(input:checked),
+.dark .deai-chip:has(input:checked) {
+    background: rgba(250, 204, 21, 0.18) !important;
+    border-color: #EAB308 !important;
+    color: #FFFFFF !important;
+}
+.deai-chip:has(input:checked) .deai-chip-dot {
+    background: #EAB308 !important;
+}
+
+.hero-spotlight-btn {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.11) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+.hero-spotlight-btn:hover {
+    border-color: #EAB308 !important;
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.22) !important;
+}
+
+.feature-tile::before {
+    background: radial-gradient(240px circle at 100% 0%, rgba(255, 255, 255, 0.06), transparent 72%) !important;
+}
+.feature-tile:hover {
+    border-color: rgba(250, 204, 21, 0.55) !important;
+}
+
+input[type="range"]::-webkit-slider-thumb,
+.dark input[type="range"]::-webkit-slider-thumb {
+    background: #EAB308 !important;
+    border: 2px solid #FFFFFF !important;
+}
+
+
+/* =========================================================================
+   NEON HUB V17 — MINIMALIST YELLOW ACCENT & SUBTLE ACTIVE TOOL HIGHLIGHT
+========================================================================= */
+.nh-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.12rem;
+    font-family: "Golos Text", sans-serif;
+    font-size: 1.02rem;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+.nh-word-neon {
+    font-weight: 700;
+    color: #111113;
+}
+.dark .nh-word-neon {
+    color: #F4F4F5;
+}
+.nh-word-hub {
+    font-weight: 700;
+    color: #CA8A04 !important;
+    -webkit-text-fill-color: #CA8A04 !important;
+}
+.dark .nh-word-hub {
+    color: #FACC15 !important;
+    -webkit-text-fill-color: #FACC15 !important;
+}
+
+.neon-text-gradient {
+    color: #CA8A04 !important;
+    -webkit-text-fill-color: #CA8A04 !important;
+}
+.dark .neon-text-gradient {
+    color: #FACC15 !important;
+    -webkit-text-fill-color: #FACC15 !important;
+}
+
+/* Главные целевые кнопки — тёплый желтый (#FACC15) с тёмным контрастным текстом */
+.artlist-pill-cta,
+.lab-btn-emerald {
+    background: #FACC15 !important;
+    color: #111113 !important;
+    border: 1px solid rgba(250, 204, 21, 0.85) !important;
+    box-shadow: 0 3px 12px -4px rgba(250, 204, 21, 0.35) !important;
+    font-weight: 600 !important;
+}
+.artlist-pill-cta:hover,
+.lab-btn-emerald:hover {
+    background: #FDE047 !important;
+    border-color: #FDE047 !important;
+    box-shadow: 0 5px 16px -4px rgba(250, 204, 21, 0.48) !important;
+}
+
+/* Деликатное выделение активного инструмента в боковой панели */
+.sidebar-item.is-active {
+    background: rgba(17, 17, 19, 0.055) !important;
+    border: 1px solid rgba(17, 17, 19, 0.07) !important;
+    box-shadow: inset 2px 0 0 #EAB308 !important;
+    color: #111113 !important;
+    font-weight: 600 !important;
+}
+.dark .sidebar-item.is-active {
+    background: rgba(255, 255, 255, 0.045) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: inset 2px 0 0 #FACC15 !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+.sidebar-item.is-active svg,
+.dark .sidebar-item.is-active svg {
+    color: #FACC15 !important;
+    opacity: 1 !important;
+}
+
+/* Деликатная активная подвкладка внутри раздела */
+.subtab-active {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(17, 17, 19, 0.12) !important;
+    color: #111113 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+}
+.dark .subtab-active {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(250, 204, 21, 0.28) !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+
+.preset-tile.is-selected,
+.dark .preset-tile.is-selected {
+    background: rgba(250, 204, 21, 0.07) !important;
+    border: 1px solid rgba(250, 204, 21, 0.38) !important;
+    box-shadow: none !important;
+    color: #FFFFFF !important;
+}
+
+.deai-chip:has(input:checked),
+.dark .deai-chip:has(input:checked) {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(250, 204, 21, 0.35) !important;
+    color: #FFFFFF !important;
+}
+.deai-chip:has(input:checked) .deai-chip-dot {
+    background: #FACC15 !important;
+}
+
+input[type="range"]::-webkit-slider-thumb,
+.dark input[type="range"]::-webkit-slider-thumb {
+    background: #FACC15 !important;
+    border: 2px solid #111113 !important;
+}
+
+
+/* =========================================================================
+   NEON HUB V22 — SAFE LAYOUT, SUBTLE FLASHLIGHT & COLLAPSIBLE RAIL
+========================================================================= */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(560px circle at 54% 18%, rgba(250, 204, 21, 0.028), rgba(255, 255, 255, 0.012) 45%, transparent 76%),
+        radial-gradient(820px circle at 50% 42%, rgba(255, 255, 255, 0.012), transparent 70%);
+}
+body:not(.dark)::before {
+    background:
+        radial-gradient(560px circle at 54% 18%, rgba(250, 204, 21, 0.07), rgba(255, 255, 255, 0.25) 48%, transparent 78%);
+}
+
+/* Гарантируем, что боковая панель, шапка, контент и модалки всегда кликабельны поверх фона */
+#app-sidebar {
+    z-index: 40;
+    width: 272px;
+    transition: width 0.22s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s ease-out;
+}
+.studio-topbar {
+    z-index: 30;
+}
+main {
+    position: relative;
+    z-index: 10;
+}
+#cmdk-modal {
+    z-index: 60;
+}
+#tool-hover-tooltip {
+    z-index: 70;
+}
+
+/* Развёрнутая панель: только название NeonHub без эмблемы */
+#app-sidebar .brand-emblem {
+    display: none;
+}
+#app-sidebar .sidebar-brand-text {
+    display: flex;
+}
+#app-sidebar .nh-wordmark {
+    font-size: 1.15rem;
+}
+
+/* Свёрнутая панель (на десктопе lg+): сжимается до 68px, остаётся только жёлтая эмблема */
+@media (min-width: 1024px) {
+    #app-sidebar.is-collapsed {
+        width: 68px !important;
+    }
+    #app-sidebar.is-collapsed .sidebar-brand-row {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        padding: 0.75rem 0.5rem;
+        gap: 0.5rem;
+    }
+    #app-sidebar.is-collapsed .brand-emblem {
+        display: flex !important;
+        width: 2.15rem;
+        height: 2.15rem;
+    }
+    #app-sidebar.is-collapsed .sidebar-brand-text,
+    #app-sidebar.is-collapsed .sidebar-cat-header,
+    #app-sidebar.is-collapsed #cmdk-trigger span:first-child span,
+    #app-sidebar.is-collapsed #cmdk-trigger kbd,
+    #app-sidebar.is-collapsed .sidebar-item span,
+    #app-sidebar.is-collapsed .border-t .min-w-0 {
+        display: none !important;
+    }
+    #app-sidebar.is-collapsed #cmdk-trigger {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    #app-sidebar.is-collapsed nav {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    #app-sidebar.is-collapsed .sidebar-item {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+        border-radius: 0.75rem;
+    }
+    #app-sidebar.is-collapsed .border-t {
+        padding: 0.5rem;
+    }
+    #app-sidebar.is-collapsed .border-t > div {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    #app-sidebar.is-collapsed #sidebar-collapse-icon {
+        transform: rotate(180deg);
+    }
+}
+
+
+
+
+
+/* =========================================================================
+   NEON HUB V24 — RUBIK DISPLAY + GOLOS TEXT UI + JETBRAINS MONO (CYRILLIC)
+========================================================================= */
+html, body, button, input, select, textarea {
+    font-family: "Golos Text", system-ui, -apple-system, sans-serif !important;
+}
+h1, h2, h3, .font-display, .nh-wordmark {
+    font-family: "Rubik", "Golos Text", sans-serif !important;
+    letter-spacing: -0.025em !important;
+}
+.font-mono, kbd, code, pre {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace !important;
+}
+
+
+/* =========================================================================
+   NEON HUB V25 — YELLOW ICON-ONLY ACTIVE STATE, CLEAN STATUS & VISIBLE FONTS
+========================================================================= */
+/* Активный инструмент: горит ТОЛЬКО иконка жёлтым — без подсветки текста, фона и обводок */
+.sidebar-item.is-active,
+.dark .sidebar-item.is-active,
+.sidebar-item.is-active:hover,
+.dark .sidebar-item.is-active:hover {
+    background: transparent !important;
+    border: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #52525B !important;
+    font-weight: 500 !important;
+}
+.dark .sidebar-item.is-active,
+.dark .sidebar-item.is-active:hover {
+    color: #A1A1AA !important;
+}
+.sidebar-item.is-active svg,
+.dark .sidebar-item.is-active svg {
+    color: #FACC15 !important;
+    stroke: #FACC15 !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.35));
+}
+
+/* Жёстко задаём читаемые кириллические шрифты на уровне корневых и дочерних элементов */
+:root, body, .font-sans, button, input, select, textarea, label, p, span, div, a {
+    font-family: "Golos Text", "Inter", system-ui, -apple-system, sans-serif;
+}
+h1, h2, h3, h4, .font-display, .nh-wordmark {
+    font-family: "Rubik", "Golos Text", system-ui, sans-serif;
+    letter-spacing: -0.02em;
+}
+.font-mono, kbd, code, pre {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}

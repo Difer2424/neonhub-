@@ -19,6 +19,7 @@ const CodeToolsModule = (() => {
                     b.classList.toggle('text-slate-900', active);
                     b.classList.toggle('dark:text-white', active);
                     b.classList.toggle('shadow-sm', active);
+                    b.classList.toggle('subtab-active', active);
                     b.classList.toggle('text-slate-500', !active);
                 });
                 formatCode(false);
@@ -31,7 +32,7 @@ const CodeToolsModule = (() => {
         document.getElementById('codefmt-clear-btn').addEventListener('click', () => {
             input.value = '';
             document.getElementById('codefmt-output').value = '';
-            setStatus('Готово', 'neutral');
+            setStatus(I18nModule.getLang() === 'ru' ? 'Готово' : 'Ready', 'neutral');
         });
         document.getElementById('codefmt-copy-btn').addEventListener('click', () => {
             const out = document.getElementById('codefmt-output');
@@ -39,7 +40,7 @@ const CodeToolsModule = (() => {
             out.select();
             try {
                 document.execCommand('copy');
-                StateModule.toast('Отформатированный код скопирован!', 'success');
+                StateModule.toast(I18nModule.getLang() === 'ru' ? 'Отформатированный код скопирован!' : 'Formatted code copied!', 'success');
             } catch (e) {}
         });
 
@@ -66,7 +67,7 @@ const CodeToolsModule = (() => {
         const doc = parser.parseFromString(xml, 'application/xml');
         const parseErr = doc.querySelector('parsererror');
         if (parseErr) {
-            throw new Error(parseErr.textContent.split('\n')[0] || 'Ошибка синтаксиса XML');
+            throw new Error(parseErr.textContent.split('\n')[0] || (I18nModule.getLang() === 'ru' ? 'Ошибка синтаксиса XML' : 'XML syntax error'));
         }
         const cleaned = xml.replace(/>\s*</g, '><').trim();
         if (minify) return cleaned;
@@ -105,7 +106,7 @@ const CodeToolsModule = (() => {
         const out = document.getElementById('codefmt-output');
         if (!raw) {
             out.value = '';
-            setStatus('Ожидание кода', 'neutral');
+            setStatus(I18nModule.getLang() === 'ru' ? 'Ожидание кода' : 'Waiting for code', 'neutral');
             return;
         }
         try {
@@ -113,17 +114,17 @@ const CodeToolsModule = (() => {
             if (mode === 'json') {
                 const parsed = JSON.parse(raw);
                 result = minify ? JSON.stringify(parsed) : JSON.stringify(parsed, null, 2);
-                setStatus(minify ? 'JSON валиден (минифицирован)' : 'JSON валиден', 'ok');
+                setStatus(minify ? (I18nModule.getLang() === 'ru' ? 'JSON валиден (минифицирован)' : 'JSON valid (minified)') : (I18nModule.getLang() === 'ru' ? 'JSON валиден' : 'JSON valid'), 'ok');
             } else if (mode === 'xml') {
                 result = formatXml(raw, minify);
-                setStatus(minify ? 'XML валиден (минифицирован)' : 'XML валиден', 'ok');
+                setStatus(minify ? (I18nModule.getLang() === 'ru' ? 'XML валиден (минифицирован)' : 'XML valid (minified)') : (I18nModule.getLang() === 'ru' ? 'XML валиден' : 'XML valid'), 'ok');
             } else {
                 result = formatSql(raw, minify);
-                setStatus(minify ? 'SQL сжат в 1 строку' : 'SQL отформатирован', 'ok');
+                setStatus(minify ? (I18nModule.getLang() === 'ru' ? 'SQL сжат в 1 строку' : 'SQL minified to 1 line') : (I18nModule.getLang() === 'ru' ? 'SQL отформатирован' : 'SQL formatted'), 'ok');
             }
             out.value = result;
         } catch (err) {
-            setStatus(`Ошибка: ${err.message}`, 'err');
+            setStatus(`${I18nModule.getLang() === 'ru' ? 'Ошибка' : 'Error'}: ${err.message}`, 'err');
         }
     }
 

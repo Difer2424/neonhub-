@@ -594,12 +594,12 @@ const TablesModule = (() => {
         const prevVal = sel.value;
         sel.innerHTML = headers.length
             ? headers.map((h, i) => `<option value="${i}">${StateModule.escapeHtml(h)}</option>`).join('')
-            : `<option value="">Столбец сортировки...</option>`;
+            : `<option value="">${isRu ? 'Столбец сортировки...' : 'Sort column...'}</option>`;
         if (prevVal && Number(prevVal) < headers.length) sel.value = prevVal;
 
         const isRu = I18nModule.getLang() === 'ru';
         document.getElementById('tables-stats').textContent = isRu
-            ? `${rows.length} строк • ${headers.length} столбцов`
+            ? (isRu ? `${rows.length} строк • ${headers.length} столбцов` : `${rows.length} rows • ${headers.length} cols`)
             : `${rows.length} rows • ${headers.length} cols`;
 
         const preview = document.getElementById('tables-preview');
@@ -620,7 +620,7 @@ const TablesModule = (() => {
         }
         html += `</tbody></table>`;
         if (rows.length > limit) {
-            html += `<div class="p-2 text-[11px] text-slate-400 text-center">Показаны первые ${limit} из ${rows.length} строк (при экспорте сохранятся все).</div>`;
+            html += `<div class="p-2 text-[11px] text-slate-400 text-center">${isRu ? `Показаны первые ${limit} из ${rows.length} строк (при экспорте сохранятся все).` : `Showing first ${limit} of ${rows.length} rows (all exported).`}</div>`;
         }
         preview.innerHTML = html;
     }
@@ -636,14 +636,14 @@ const TablesModule = (() => {
     function exportXlsx() {
         if (!headers.length) return;
         if (typeof XLSX === 'undefined') {
-            StateModule.toast('SheetJS не загрузился — используйте экспорт CSV/JSON', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'SheetJS не загрузился — используйте экспорт CSV/JSON' : 'SheetJS failed to load — use CSV/JSON export', 'warn');
             return;
         }
         const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
         XLSX.writeFile(wb, 'neonhub-table.xlsx');
-        StateModule.toast('Excel (.xlsx) сохранён!', 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? 'Excel (.xlsx) сохранён!' : 'Excel (.xlsx) saved!', 'success');
     }
 
     function exportCsv() {
@@ -654,7 +654,7 @@ const TablesModule = (() => {
         };
         const csv = '\uFEFF' + [headers, ...rows].map((r) => r.map(esc).join(',')).join('\n');
         downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), 'neonhub-table.csv');
-        StateModule.toast('CSV сохранён!', 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? 'CSV сохранён!' : 'CSV saved!', 'success');
     }
 
     function exportJson() {
@@ -665,7 +665,7 @@ const TablesModule = (() => {
             return o;
         });
         downloadBlob(new Blob([JSON.stringify(objs, null, 2)], { type: 'application/json' }), 'neonhub-table.json');
-        StateModule.toast('JSON сохранён!', 'success');
+        StateModule.toast(I18nModule.getLang() === 'ru' ? 'JSON сохранён!' : 'JSON saved!', 'success');
     }
 
     return { init, loadFile };

@@ -18,10 +18,7 @@ const MediaModule = (() => {
             btn.addEventListener('click', () => {
                 targetMB = Number(btn.dataset.mb);
                 document.querySelectorAll('.media-preset-btn').forEach((b) => {
-                    const active = b === btn;
-                    b.className = active
-                        ? 'media-preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
-                        : 'media-preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700';
+                    b.classList.toggle('is-selected', b === btn);
                 });
                 updateBitrateCalc();
             });
@@ -281,9 +278,9 @@ const VideoGifModule = (() => {
             document.getElementById('gif-placeholder').classList.add('hidden');
             document.getElementById('gif-result-meta').textContent = `${width}×${height} • ${fps} FPS • ${totalFrames} кадров • ${StateModule.formatBytes(gifBlob.size)}`;
             document.getElementById('gif-download-btn').disabled = false;
-            StateModule.toast('GIF готов!', 'success');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'GIF готов!' : 'GIF ready!', 'success');
         } catch (e) {
-            StateModule.toast('Ошибка кодирования GIF', 'warn');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Ошибка кодирования GIF' : 'GIF encoding error', 'warn');
         }
     }
 
@@ -315,7 +312,7 @@ const AudioSurgeonModule = (() => {
             drawWaveform();
         });
         document.getElementById('surgeon-min-pause').addEventListener('input', (e) => {
-            document.getElementById('surgeon-pause-val').textContent = `${e.target.value} мс`;
+            document.getElementById('surgeon-pause-val').textContent = `${e.target.value} ${I18nModule.getLang() === 'ru' ? 'мс' : 'ms'}`;
             drawWaveform();
         });
 
@@ -491,7 +488,7 @@ const AudioSurgeonModule = (() => {
 
         const dur = audioBuffer.duration.toFixed(1);
         const cutSec = (cutSamples / audioBuffer.sampleRate).toFixed(1);
-        document.getElementById('surgeon-stats').textContent = `${dur}с • пауз: ${regions.length} (-${cutSec}с)`;
+        document.getElementById('surgeon-stats').textContent = I18nModule.getLang() === 'ru' ? `${dur}с • пауз: ${regions.length} (-${cutSec}с)` : `${dur}s • pauses: ${regions.length} (-${cutSec}s)`;
     }
 
     function cutSilence() {
@@ -559,14 +556,14 @@ const TranscribeModule = (() => {
             const out = document.getElementById('transcribe-output');
             if (!out.value) return;
             out.select();
-            try { document.execCommand('copy'); StateModule.toast('Скопировано!', 'success'); } catch (e) {}
+            try { document.execCommand('copy'); StateModule.toast(I18nModule.getLang() === 'ru' ? 'Скопировано!' : 'Copied!', 'success'); } catch (e) {}
         });
         document.getElementById('transcribe-to-deai').addEventListener('click', () => {
             const txt = document.getElementById('transcribe-output').value.trim();
             if (!txt) return;
             DeAiModule.setInput(txt);
             RouterModule.navigateSeo('/de-ai-text');
-            StateModule.toast('Текст передан в Анти-ИИ!', 'info');
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Текст передан в Анти-ИИ!' : 'Sent to De-AI Cleaner!', 'info');
         });
     }
 
@@ -609,7 +606,7 @@ const TranscribeModule = (() => {
             status.textContent = I18nModule.getLang() === 'ru' ? 'Готово' : 'Ready';
         };
         recognition.onerror = () => {
-            status.textContent = 'Ошибка микрофона / сети';
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Ошибка микрофона / сети' : 'Microphone / network error';
         };
         recognition.start();
     }
@@ -640,30 +637,30 @@ const TranscribeModule = (() => {
         const runBtn = document.getElementById('whisper-run-btn');
         runBtn.disabled = true;
         try {
-            status.textContent = 'Загрузка аудио (16 kHz)...';
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Загрузка аудио (16 kHz)...' : 'Loading audio (16 kHz)...';
             const pcm = await decodeTo16kMono(whisperFile);
 
             if (!whisperPipeline) {
-                status.textContent = 'Загрузка Whisper-tiny в браузер (1 раз ~40 МБ)...';
+                status.textContent = I18nModule.getLang() === 'ru' ? 'Загрузка Whisper-tiny в браузер (1 раз ~40 МБ)...' : 'Loading Whisper-tiny in browser (one-time ~40 MB)...';
                 const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
                 env.allowLocalModels = false;
                 whisperPipeline = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
                     progress_callback: (p) => {
-                        if (p.progress) status.textContent = `Загрузка модели: ${Math.round(p.progress)}%`;
+                        if (p.progress) status.textContent = I18nModule.getLang() === 'ru' ? `Загрузка модели: ${Math.round(p.progress)}%` : `Loading model: ${Math.round(p.progress)}%`;
                     }
                 });
             }
 
-            status.textContent = 'Распознавание речи (Whisper)...';
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Распознавание речи (Whisper)...' : 'Transcribing speech (Whisper)...';
             const langCode = document.getElementById('transcribe-lang').value.split('-')[0];
             const res = await whisperPipeline(pcm, { language: langCode, task: 'transcribe', chunk_length_s: 30 });
             const out = document.getElementById('transcribe-output');
             out.value = (out.value ? out.value + '\n\n' : '') + (res.text || '').trim();
-            status.textContent = 'Готово (офлайн Whisper)!';
-            StateModule.toast('Расшифровка завершена!', 'success');
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Готово (офлайн Whisper)!' : 'Done (offline Whisper)!';
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Расшифровка завершена!' : 'Transcription complete!', 'success');
         } catch (err) {
-            status.textContent = 'Не удалось запустить Whisper (проверьте доступ к CDN/WASM)';
-            StateModule.toast('Ошибка запуска Whisper в текущем окружении', 'warn');
+            status.textContent = I18nModule.getLang() === 'ru' ? 'Не удалось запустить Whisper (проверьте доступ к CDN/WASM)' : 'Failed to start Whisper (check CDN/WASM access)';
+            StateModule.toast(I18nModule.getLang() === 'ru' ? 'Ошибка запуска Whisper в текущем окружении' : 'Whisper failed in current environment', 'warn');
         } finally {
             runBtn.disabled = false;
         }

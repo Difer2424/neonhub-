@@ -4,7 +4,7 @@
   "description": "18 приватных инструментов в браузере без загрузки на сервер: фото, PDF, Анти-ИИ, Diff, медиа и QR.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#131314",
+  "background_color": "#0B0C0E",
   "theme_color": "#131314",
   "lang": "ru",
   "icons": [

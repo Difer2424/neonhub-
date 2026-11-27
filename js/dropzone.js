@@ -176,7 +176,7 @@ const DropzoneModule = (() => {
                     const txt = await file.text();
                     StateModule.trackProcessed(file.size);
                     CodeToolsModule.setInput(txt, file.name);
-                    StateModule.toast(`Файл загружен: ${file.name}`, 'success');
+                    StateModule.toast(isRu ? `Файл загружен: ${file.name}` : `Loaded: ${file.name}`, 'success');
                 } else if (target === 'pdf-tools') {
                     PdfToolsModule.addFiles(files);
                 } else if (target === 'utils-sha') {
@@ -224,7 +224,7 @@ const DropzoneModule = (() => {
 
         if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
             badge.textContent = files.length > 1 ? `${files.length}× PDF` : 'PDF';
-            addActionBtn(actionsEl, isRu ? 'Открыть в PDF-комбайне (слить / разделить)' : 'Open in PDF Toolkit', true, () => {
+            addActionBtn(actionsEl, isRu ? 'Открыть в PDF-инструментах (слить / разделить)' : 'Open in PDF Toolkit', true, () => {
                 RouterModule.navigateSeo('/pdf-tools');
                 PdfToolsModule.addFiles(files);
             });
